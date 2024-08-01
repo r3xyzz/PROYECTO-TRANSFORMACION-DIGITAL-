@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Básica</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: blue;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar img {
+            height: 40px; /* Ajusta la altura del logo según sea necesario */
+        }
+        .container {
+            margin: 20px;
+            position: relative;
+        }
+        .fecha {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        .botones {
+            margin-top: 50px;
+        }
+        .boton {
+            display: block;
+            width: 200px;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #87CEEB;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .boton:hover {
+            background-color: #00BFFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <img src="imagenes/klipartz.com.png" alt="Logo"> <!-- Reemplaza 'ruta_del_logo.png' con la ruta de tu logo -->
+        <div>Usuario: <span id="usuario">Nombre del Usuario</span></div>
+    </div>
+    <div class="container">
+        <div class="fecha" id="fecha"></div>
+        <div class="botones">
+            <a href="#" class="boton">Carga de archivo con programación</a>
+            <a href="#" class="boton">Gestión de reservas</a>
+            <a href="#" class="boton">Reporte y Dashboard</a>
+            <a href="#" class="boton">Creación de nuevos usuarios</a>
+            <a href="#" class="boton">Administración de usuarios</a>
+        </div>
+    </div>
+
+    <script>
+        // Para mostrar la fecha actual
+        function mostrarFecha() {
+            var fecha = new Date();
+            var opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('fecha').innerHTML = fecha.toLocaleDateString('es-ES', opciones);
+        }
+        mostrarFecha();
+    </script>
+</body>
+</html>
