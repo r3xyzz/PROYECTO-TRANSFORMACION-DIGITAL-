@@ -1,0 +1,74 @@
+/* Reseteo de márgenes y padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Asegura que el HTML y el cuerpo ocupen todo el ancho y alto de la pantalla */
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+/* Estilo general para el cuerpo */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Ajusta el contenido al inicio verticalmente */
+    background: #f0f0f0; /* Fondo gris claro para todo el cuerpo */
+}
+
+/* Rectángulo azul en la parte superior */
+.blue-rectangle {
+    width: 100%;
+    height: 70px;
+    background-color: #002060;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Distribuye el contenido entre los extremos */
+    padding: 0 20px; /* Añade espacio a los lados del rectángulo */
+}
+
+/* Estilo para el logo dentro del rectángulo azul */
+.blue-rectangle .logo {
+    height: 40px; /* Ajusta la altura del logo */
+}
+
+/* Estilo para la información del usuario */
+.user-info {
+    display: flex;
+    align-items: center;
+    color: white; /* Color del texto */
+}
+
+/* Estilo para la foto del usuario */
+.user-info .user-photo {
+    height: 40px; /* Ajusta la altura de la foto */
+    border-radius: 50%; /* Hace que la foto sea circular */
+    margin-right: 10px; /* Espacio entre la foto y el nombre del usuario */
+}
+
+/* Estilo para el nombre del usuario */
+.user-info .user-name {
+    font-size: 1rem; /* Tamaño de la fuente */
+}
+
+/* Contenido principal */
+.main-content {
+    padding: 20px;
+    width: 100%;
+    max-width: 1200px; /* Ancho máximo del contenido principal */
+    margin-top: 20px; /* Espacio entre el navbar y el contenido */
+}
+
+.main-content h1 {
+    font-size: 2.5rem;
+    color: #333;
+}
+
+.main-content p {
+    font-size: 1.2rem;
+    color: #666;
+}
