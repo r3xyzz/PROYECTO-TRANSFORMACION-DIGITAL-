@@ -12,92 +12,94 @@ html, body {
     overflow: hidden;
 }
 
-/* Estilo general para el cuerpo, centra el contenido */
+/* Estilo general para el cuerpo */
 body {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    background: #f0f0f0; /* Fondo gris claro para todo el cuerpo */
+    justify-content: flex-start; /* Ajusta el contenido al inicio verticalmente */
+    background: none; /* Asegura que no haya fondo en el body */
 }
 
-/* Estilo para la barra de navegación */
-.navbar {
+/* Rectángulo azul en la parte superior */
+.blue-rectangle {
     width: 100%;
+    height: 50px;
+    background-color: #002060;
+    margin-bottom: 20px; /* Espacio entre el rectángulo azul y el resto del contenido */
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    background-color: #333; /* Fondo oscuro para la barra de navegación */
-    color: white;
+    justify-content: center; /* Centra el contenido horizontalmente */
+    z-index: 10; /* Asegura que esté por encima del fondo */
+    position: relative; /* Para manejar el z-index */
+}
+
+/* Estilo para el logo dentro del rectángulo azul */
+.blue-rectangle .logo {
+    height: 40px; /* Ajusta la altura del logo */
 }
 
 /* Contenedor principal */
 .main-container {
     width: 100%;
-    max-width: 1920px;
     height: 100%;
-    max-height: 1080px;
-    position: relative;
-    background: white;
-}
-
-/* Estilo para la imagen principal */
-.main-image {
-    width: 100%;
-    height: auto;
-    position: absolute;
+    position: absolute; /* Cambiado a absolute */
     top: 0;
     left: 0;
+    background-image: url('imagenes/fondo principal.png'); /* Ruta de la imagen de fondo */
+    background-size: cover; /* Asegura que la imagen cubra todo el contenedor */
+    background-position: center; /* Centra la imagen de fondo */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    z-index: 1; /* Asegura que esté debajo del rectángulo azul */
 }
 
 /* Caja con sombra */
 .box-shadow {
     width: 48%;
     height: 11%;
-    top: 8%;
+    top: 10%;
     left: 26%;
     position: absolute;
-    background: rgba(255, 255, 255, 0.80);
+    background: rgba(255, 255, 255, 0.8);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px; /* Añade espacio interior para evitar que el texto toque los bordes */
+    overflow: hidden; /* Asegura que el contenido no se salga de la caja */
+    text-align: center; /* Asegura que el texto esté centrado */
 }
 
 /* Texto del título */
 .title-text {
-    width: 48%;
-    height: 5%;
-    top: 9%;
-    left: 26%;
-    position: absolute;
-    text-align: center;
+    width: 100%;
     color: black;
     font-size: 2vw;
     font-family: Inter, sans-serif;
     font-weight: 600;
-    line-height: 52px;
+    line-height: 1.2;
     letter-spacing: 2px;
     word-wrap: break-word;
+    text-align: center;
 }
 
 /* Caja del formulario de inicio de sesión */
 .login-box {
     width: 40%;
-    height: 45%;
+    height: auto;
     top: 32%;
     left: 30%;
     position: absolute;
     background: rgba(255, 255, 255, 0.80);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 20px;
+    padding-bottom: 20px; /* Espacio para el contenido del formulario */
 }
 
 /* Título del formulario de inicio de sesión */
 .login-title {
-    width: 30%;
-    height: 6%;
-    top: 35%;
-    left: 35%;
-    position: absolute;
+    width: 100%;
     text-align: center;
     color: black;
     font-size: 2vw;
@@ -106,15 +108,13 @@ body {
     line-height: 52px;
     letter-spacing: 3px;
     word-wrap: break-word;
+    padding: 20px 0; /* Espacio alrededor del título */
 }
 
 /* Contenedor del formulario de inicio de sesión */
 .login-form {
-    width: 34%;
+    width: 100%;
     padding: 24px;
-    top: 41%;
-    left: 33%;
-    position: absolute;
     background: white;
     border-radius: 8px;
     border: 1px #D9D9D9 solid;
