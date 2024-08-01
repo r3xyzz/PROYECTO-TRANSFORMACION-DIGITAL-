@@ -1,0 +1,53 @@
+/* Hoja de Estilos CSS */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background-color: blue;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar img {
+     height: 40px; /* Ajusta la altura del logo según sea necesario */
+}
+
+.container {
+    margin: 20px;
+    position: relative;
+}
+        
+.fecha {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.botones {
+    margin-top: 50px;
+}
+
+.boton {
+    display: block;
+    width: 200px;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #87CEEB;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.boton:hover {
+    background-color: #00BFFF;
+}
