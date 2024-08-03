@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página Principal</title>
-    <link rel="stylesheet" type="text/css" href="Estilos2.css">
-    <script src="Dinamismo.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="Estilos3.css">
+    <script src="Dinamismo.js" defer></script> <!-- Enlaza al archivo JavaScript para la fecha -->
 </head>
 <body>
     <!-- Navbar -->
-    <div class="blue-rectangle">
+    <div class="navbar">
         <img src="imagenes/logo-duoc2.png" alt="Logo" class="logo">
         <div class="user-info">
             <img src="imagenes/foto-logo.png" alt="Foto de Usuario" class="user-photo">
@@ -17,10 +16,40 @@
         </div>
     </div>
 
+    <!-- Fecha Actual -->
+    <div class="fecha-container">
+        <div id="fecha"></div> <!-- Aquí se mostrará la fecha -->
+    </div>
+
     <!-- Contenido Principal -->
     <div class="main-content">
-        <h1>Bienvenido a la Página Principal</h1>
-        <p>Este es el contenido principal de la página.</p>
+        <div class="contenedor-imagen">
+            <img src="imagenes/fondo principal.png" alt="Foto Principal" class="imagen-principal"> <!-- Imagen principal -->
+            <h2 class="menu-general">MENU GENERAL</h2> <!-- Nuevo elemento con el texto -->
+        </div>
+        <!-- Contenedor de botones -->
+        <div class="botones-container">
+            <button class="boton">
+                <img src="imagenes/logo-carga.png" alt="Logo Carga" class="boton-imagen">
+                Carga de Archivo con Programacion
+            </button>
+            <button class="boton">
+                <img src="imagenes/logo-gestion.png" alt="Logo Gestion" class="boton-imagen">
+                Gestion de Reservas
+            </button>
+            <button class="boton">
+                <img src="imagenes/logo-reporte.png" alt="Logo Reporte" class="boton-imagen">
+                Reportes y Dashboards
+            </button>
+            <button class="boton">
+                <img src="imagenes/logo-creacion.png" alt="Logo Creacion" class="boton-imagen">
+                Creacion de Nuevos Usuarios
+            </button>
+            <button class="boton">
+                <img src="imagenes/logo-administracion.png" alt="Logo Administracion" class="boton-imagen">
+                Administracion de Usuarios
+            </button>
+        </div>
     </div>
 </body>
 </html>

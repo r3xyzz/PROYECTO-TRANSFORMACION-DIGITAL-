@@ -1,6 +1,12 @@
 / Hoja de JavaScript/
 
+//Menu desplegable
 document.addEventListener('DOMContentLoaded', function() {
+    // Para el menú desplegable
+    document.querySelector('.menu-btn').addEventListener('click', function() {
+        document.querySelector('.menu-content').classList.toggle('show');
+    });
+
     // Para mostrar la fecha actual
     function mostrarFecha() {
         var fecha = new Date();
