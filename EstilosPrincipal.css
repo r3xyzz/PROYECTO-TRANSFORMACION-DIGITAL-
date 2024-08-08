@@ -72,7 +72,7 @@ html, body {
 .main-content {
     background-color: white; /* Fondo blanco */
     padding: 20px;
-    width: calc(100% - 40px); /* Ajusta el ancho para hacer espacio para la fecha */
+    width: calc(100% - 50px); /* Ajusta el ancho para hacer espacio para la fecha */
     margin: 100px 10px 10px 400px; /* Ajusta el margen para hacer más espacio */
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); /* Sombra para el cuadro */
     border-radius: 20px; /* Bordes redondeados */
