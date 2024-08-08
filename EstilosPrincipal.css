@@ -84,21 +84,21 @@ html, body {
 
 /* Contenedor de la imagen y el texto */
 .contenedor-imagen {
-    position: relative;
     display: flex;
     justify-content: center; /* Centra horizontalmente */
     align-items: center; /* Centra verticalmente */
-    width: 100%;
-    max-width: 500px; /* Ajusta el ancho máximo del contenedor */
+    max-width: 990px;
+    height: 100px;
     margin: 0 auto; /* Centra el contenedor horizontalmente */
 }
 
 /* Imagen principal */
 .imagen-principal {
     width: 100%; /* Ajusta el ancho según sea necesario */
-    height: auto; /* Mantiene la proporción de la imagen */
+    height: 100%; 
     border-radius: 15px; /* Bordes redondeados */
     display: block;
+    object-fit: cover; /* Permite el relleno de la imagen sin que se salga de los bordes de su contenedor */
 }
 
 /* Texto "MENU GENERAL" */
