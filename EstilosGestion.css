@@ -162,14 +162,92 @@ html, body {
     border-radius: 20px; /* Bordes redondeados */
     flex: 1; /* Permite que el contenido crezca y llene el espacio disponible */
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
-/* Caja redondeada con borde punteado */
-.rounded-box {
-    width: 90%;
-    height: 90%;
-    border: 2px dashed #000; /* Borde punteado */
-    border-radius: 20px; /* Bordes redondeados */
+/* Navbar dentro del cuadro blanco */
+.navbar-desplegable {
+    width: 100%;
+    background-color: #002060;
+    border-radius: 10px;
+    padding: 10px 20px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px; /* Añade un margen inferior para separar la tabla de la navbar */
+}
+
+.navbar-desplegable ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.navbar-desplegable ul li {
+    position: relative;
+}
+
+.navbar-desplegable ul li a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    display: block;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.navbar-desplegable ul li a:hover {
+    background-color: #004080;
+}
+
+.navbar-desplegable ul li ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #002060;
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 10px 0;
+}
+
+.navbar-desplegable ul li:hover ul {
+    display: block;
+}
+
+.navbar-desplegable ul li ul li {
+    width: 200px;
+}
+
+.navbar-desplegable ul li ul li a {
+    padding: 10px 15px;
+}
+
+.navbar-desplegable ul li ul li a:hover {
+    background-color: #004080;
+}
+
+/* Tabla de horarios */
+.tabla-horarios {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.tabla-horarios th, .tabla-horarios td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.tabla-horarios th {
+    background-color: #004080;
+    color: white;
+    font-weight: bold;
+}
+
+.tabla-horarios td {
+    background-color: #f2f2f2;
 }
