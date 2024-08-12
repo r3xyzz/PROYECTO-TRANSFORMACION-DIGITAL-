@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('modal');
     const closeBtn = document.querySelector('.close-btn');
     const cells = document.querySelectorAll('.cell');
-    const fechaInput = document.getElementById('fecha');
+    const fechaInput = document.getElementById('fecha-dia');
     const horaInicioInput = document.getElementById('hora-inicio');
     const horaFinInput = document.getElementById('hora-fin');
 
