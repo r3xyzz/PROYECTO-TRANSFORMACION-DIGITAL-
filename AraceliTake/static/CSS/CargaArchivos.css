@@ -1,0 +1,71 @@
+.drag-drop-area {
+    background-color: #f9f9f9; /* Color de fondo gris claro */
+    height: 70%; /* Ajusta según el tamaño deseado */
+    margin: 110px 13%; /* Centra el contenedor horizontalmente */
+    width: 70%; /* Ajusta el ancho del contenedor */
+    border: 7px dashed #CCCCCC; /* Borde punteado alrededor del cuadro */
+    border-radius: 10px;
+    position: relative; /* Permite posicionar los elementos hijos */
+    padding-top: 50px; /* Espacio superior para el botón */
+}
+
+.drag-drop-area span {
+    font-size: 16px;
+}
+
+.drag-drop-area.dragging {
+    border-color: #FFCC00;
+    background-color: #FFFAE6;
+    color: #FFC107;
+}
+
+.drag-drop-text{
+    height: calc(100% - 80px); 
+    color: #CCCCCC;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.drag-drop-area.dragging .drag-drop-text span {
+    color: #FFC107; 
+}
+
+.upload-button {
+    background-color: #FFC107;
+    color: #000000;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0px 4px 3px -1px rgba(0, 0, 0, 0.44);
+    width: 220px; /* Fija el ancho del botón */
+    height: 140px; /* Fija la altura del botón */
+    margin: 0 auto; /* Centra el botón horizontalmente */
+    position: absolute;
+    top: -65px; /* Mueve el botón hacia arriba */
+    left: 50%;
+    transform: translateX(-50%);
+    padding-top: 50px;
+}
+
+
+
+.upload-status {
+    color: #888888; /* Color gris para texto por defecto */
+    font-size: 18px; /* Tamaño de la fuente */
+    padding: 10px;
+}
+
+.upload-status.success {
+    color: #225834; /* Verde para el éxito */
+    background-color: #D4EDDA;
+    font-size: 18px; 
+}
+
+.upload-status.error {
+    background-color: #f8d7da;
+    color: #7e2a32; /* Rojo para los errores */
+    font-size: 18px; 
+}
+
+
