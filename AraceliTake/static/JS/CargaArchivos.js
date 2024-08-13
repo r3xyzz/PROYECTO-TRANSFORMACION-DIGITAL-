@@ -4,11 +4,6 @@ const uploadButton = document.getElementById('upload-button');
 const dragDropArea = document.getElementById('drag-drop-area');
 const uploadStatus = document.getElementById('upload-status');
 
-// Botón para seleccionar archivos
-uploadButton.addEventListener('click', () => {
-    fileInput.click();
-});
-
 // Cambiar el estilo al arrastrar el archivo sobre la zona
 dragDropArea.addEventListener('dragover', (e) => {
     e.preventDefault();
