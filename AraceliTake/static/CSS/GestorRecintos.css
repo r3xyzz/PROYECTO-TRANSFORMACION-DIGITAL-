@@ -1,0 +1,67 @@
+/* Tabla de horarios */
+.tabla-horarios {
+    width: 100%;
+    text-align: center;
+}
+
+.tabla-horarios th, .tabla-horarios td {
+    border: 1px solid #adadad;
+    padding: 3px;
+    
+}
+
+.tabla-horarios th {
+    background-color: #000000;
+    color: white;
+    font-weight: bold;
+    
+}
+
+.tabla-horarios td {
+    background-color: #f2f2f2;
+    cursor: pointer;
+}
+
+/* Navbar dentro del cuadro blanco */
+.navbar-desplegable {
+    background-color: #000000;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0px 4px 3px -1px rgba(0,0,0,0.44);
+    margin-bottom: 20px; /* Añade un margen inferior para separar la tabla de la navbar */
+}
+
+.navbar-desplegable ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.navbar-desplegable ul li {
+    color: white;
+    padding: 10px;
+}
+
+
+/* Botón de Confirmación */
+.modal-body button[type="submit"]{
+    background-color: #FFCC00;
+    color: #000000;
+}
+.modal-body button[type="submit"]:hover{
+    color: #000000;
+    background-color: #ffae00;
+}
+
+/* Botón de Cancelación */
+.modal-body button[type="button"]{
+    background-color: #000000;
+    color: #ffffff;
+    margin-left: 50%;
+}
+.modal-body button[type="button"]:hover{
+    color: #a0a0a0;
+    background-color: #1A1A1A;
+}
