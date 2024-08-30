@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TITULOMODULO</title>
+    <!-- CSS de HEADER, SIDEBAR y FOOTER DINÁMICO -->
+    <link rel="stylesheet" href="EstiloPeticion.css">
+
+    <!-- CSS de PÁGINA CORRESPONDIENTE -->
+    
+    <!-- BOOTSTRAP e ICONO de BOOTSTRAP -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+</head>
+<body>
+    <div class="container-grid">
+        <header>
+        </header>
+        <aside>
+        </aside>
+
+        <main class="main-content">
+            <!-- Botones -->
+            <div class="mb-4">
+                <button type="button" class="btn btn-secondary" onclick="showAll()">Mostrar Todos</button>
+                <button type="button" class="btn btn-primary" onclick="filterTable('pendiente')">Pendientes</button>
+                <button type="button" class="btn btn-success" onclick="filterTable('confirmado')">Confirmadas</button>
+                <button type="button" class="btn btn-danger" onclick="filterTable('cancelado')">Canceladas</button>
+            </div>
+
+            <!-- Tabla de ejemplo -->
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ESTADO</th>
+                        <th>DIA</th>
+                        <th>HORARIO</th>
+                        <th>SALA</th>
+                        <th>CLASE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="pendiente">
+                        <td>Pendiente</td>
+                        <td>Lunes</td>
+                        <td>10:00 - 11:00</td>
+                        <td>Sala 1</td>
+                        <td>Matemáticas</td>
+                    </tr>
+                    <tr class="confirmado">
+                        <td>Confirmado</td>
+                        <td>Martes</td>
+                        <td>11:00 - 12:00</td>
+                        <td>Sala 2</td>
+                        <td>Historia</td>
+                    </tr>
+                    <tr class="cancelado">
+                        <td>Cancelado</td>
+                        <td>Miércoles</td>
+                        <td>12:00 - 13:00</td>
+                        <td>Sala 3</td>
+                        <td>Ciencias</td>
+                    </tr>
+                    <tr class="pendiente">
+                        <td>Pendiente</td>
+                        <td>Jueves</td>
+                        <td>13:00 - 14:00</td>
+                        <td>Sala 4</td>
+                        <td>Inglés</td>
+                    </tr>
+                    <!-- Puedes agregar más filas según sea necesario -->
+                </tbody>
+            </table>
+        </main>
+
+        <footer>
+        </footer>
+    </div>
+    <!-- SCRIPTS BOOTSTRAP -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
+    <!-- SCRIPTS HEADER Y FOOTER DINÁMICO -->
+    <script src="PeticionesJS.js"></script>
+
+    <!-- Script para filtrar la tabla -->
+    <script>
+        function filterTable(status) {
+            // Ocultar todas las filas
+            var rows = document.querySelectorAll('tbody tr');
+            rows.forEach(function(row) {
+                row.style.display = 'none';
+            });
+
+            // Mostrar solo las filas que coincidan con el estado seleccionado
+            var selectedRows = document.querySelectorAll('tbody tr.' + status);
+            selectedRows.forEach(function(row) {
+                row.style.display = '';
+            });
+        }
+
+        function showAll() {
+            // Mostrar todas las filas
+            var rows = document.querySelectorAll('tbody tr');
+            rows.forEach(function(row) {
+                row.style.display = '';
+            });
+        }
+    </script>
+</body>
+</html>

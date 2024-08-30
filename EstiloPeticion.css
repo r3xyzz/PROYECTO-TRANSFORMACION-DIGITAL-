@@ -1,0 +1,76 @@
+.navImg{
+    height: 40px; /* Ajusta la altura del logo */
+}
+.user-photo{
+    height: 30px;
+}
+
+.container-grid {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+        "header header"
+        "aside main"
+        "footer footer";
+    height: 100vh;
+    min-height: 100vh; /* Ajusta la altura mínima al 100% de la ventana */
+}
+
+header{
+    grid-area: header;
+}
+.navbar{
+    background-color: #000000;
+    box-shadow: 0px 4px 3px -1px rgba(0,0,0,0.44);
+    color: white;
+}
+.navbar h3{
+    color:white;
+}
+
+
+aside{
+    grid-area: aside;
+    background-color: #000000;
+    padding: 15px;
+    color: white;
+}
+.sidebar-item {
+    margin-bottom: 5px;
+    padding: 10px;
+    text-align: left; /* Alineación a la izquierda para el texto e ícono */
+    color: white;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+.sidebar-item:hover{
+    text-decoration: none;
+    color: #a0a0a0;
+    background-color: #1A1A1A;
+    border-radius: 10px;
+}
+.sidebar-item:hover i {
+    color: inherit;
+}
+.sidebar-item i {
+    margin-right: 10px; /* Espacio entre el ícono y el texto */
+    font-size: 200%;
+}
+
+.main-content {
+    grid-area: main;
+    background-color: #EEEEEE;
+    padding: 35px;
+    padding-left: 70px;
+    padding-right: 70px;
+}
+
+footer {
+    grid-area: footer;
+    background-color: #1A1A1A;
+    color: rgba(255, 255, 255, 0);
+    text-align: left;
+    padding: 5px;
+}
