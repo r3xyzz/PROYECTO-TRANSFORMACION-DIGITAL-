@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const fechaInput = document.getElementById('fecha-dia');
     const horaInicioInput = document.getElementById('hora-inicio');
     const horaFinInput = document.getElementById('hora-fin');
+    const popup = document.getElementById('popup');
+    const closeBtn = document.querySelector('.close-btn');
 
     // Abrir modal cuando se hace clic en una celda
     cells.forEach(cell => {
@@ -45,10 +47,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.setCustomValidity(''); // Elimina cualquier mensaje de error si la entrada es válida
                 }
             });
-
-            
         });
     });
 
-});
+    // Mostrar el pop-up al enviar el formulario
+    document.querySelector('#modalReserva form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Evita que el formulario se envíe y recargue la página
 
+        // Ocultar el modal
+        modal.hide();
+
+        // Mostrar el pop-up
+        popup.style.display = 'block';
+    });
+
+    // Cerrar el pop-up cuando se haga clic en el botón de cerrar
+    closeBtn.addEventListener('click', function() {
+        popup.style.display = 'none';
+    });
+});
