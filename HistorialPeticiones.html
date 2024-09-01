@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TITULOMODULO</title>
+    <!-- CSS de HEADER, SIDEBAR y FOOTER DINÁMICO -->
+    <link rel="stylesheet" href="EstiloHistorial.css">
+
+    <!-- CSS de PÁGINA CORRESPONDIENTE -->
+    
+    <!-- BOOTSTRAP e ICONO de BOOTSTRAP -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+</head>
+<body>
+    <div class="container-grid">
+        <header></header>
+        <aside></aside>
+
+        <main class="main-content">
+            <!-- Filtros y Botón de Exportación -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-group">
+                    <label for="filter">Filtrar por:</label>
+                    <select id="filter" class="form-control" onchange="filterTable()">
+                        <option value="all">Todos</option>
+                        <option value="week">Semana</option>
+                        <option value="month">Mes</option>
+                        <option value="year">Año</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-success" onclick="exportToCSV()">Exportar a CSV</button>
+            </div>
+
+            <!-- Tabla de Peticiones -->
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Estado</th>
+                        <th>Día</th>
+                        <th>Horario</th>
+                        <th>Sala</th>
+                        <th>Clase</th>
+                        <th>Fecha de Solicitud</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="week">
+                        <td>Pendiente</td>
+                        <td>Lunes</td>
+                        <td>10:00 - 11:00</td>
+                        <td>Sala 1</td>
+                        <td>Matemáticas</td>
+                        <td>2024-08-26</td>
+                    </tr>
+                    <tr class="month">
+                        <td>Confirmado</td>
+                        <td>Martes</td>
+                        <td>11:00 - 12:00</td>
+                        <td>Sala 2</td>
+                        <td>Historia</td>
+                        <td>2024-08-05</td>
+                    </tr>
+                    <tr class="year">
+                        <td>Cancelado</td>
+                        <td>Miércoles</td>
+                        <td>12:00 - 13:00</td>
+                        <td>Sala 3</td>
+                        <td>Ciencias</td>
+                        <td>2023-09-10</td>
+                    </tr>
+                    <!-- Más filas de ejemplo -->
+                </tbody>
+            </table>
+        </main>
+
+        <footer></footer>
+    </div>
+    
+    <!-- SCRIPTS BOOTSTRAP -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
+    <!-- SCRIPTS HEADER Y FOOTER DINÁMICO -->
+    <script src="FiltroTablasPeticion.js"></script>
+
+    <!-- Script para filtrar la tabla y exportar a CSV -->
+    <script>
+        function filterTable() {
+            var filterValue = document.getElementById("filter").value;
+            var rows = document.querySelectorAll('tbody tr');
+
+            rows.forEach(function(row) {
+                if (filterValue === 'all') {
+                    row.style.display = '';
+                } else {
+                    if (row.classList.contains(filterValue)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        function exportToCSV() {
+            var csv = [];
+            var rows = document.querySelectorAll("table tr");
+
+            rows.forEach(function(row) {
+                var cols = row.querySelectorAll("td, th");
+                var rowData = [];
+                cols.forEach(function(col) {
+                    rowData.push(col.innerText);
+                });
+                csv.push(rowData.join(","));
+            });
+
+            var csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
+            var downloadLink = document.createElement("a");
+            downloadLink.download = "historial_peticiones.csv";
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+        }
+    </script>
+</body>
+</html>
