@@ -88,6 +88,7 @@
     <script src="FiltroTablasPeticion.js"></script>
 
     <!-- Script para filtrar la tabla y exportar a CSV -->
+     <!-- Exportacion y conversion de CSV a excel (en prueba)-->
     <script>
         function filterTable() {
             var filterValue = document.getElementById("filter").value;
@@ -105,7 +106,7 @@
                 }
             });
         }
-
+        
         function exportToCSV() {
             var csv = [];
             var rows = document.querySelectorAll("table tr");
