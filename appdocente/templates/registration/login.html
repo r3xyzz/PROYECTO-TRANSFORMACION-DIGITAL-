@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/login/styles.css' %}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <div class="wrapper">
+        <form method="post">
+            {% csrf_token %}
+            <h1>Login</h1>
+            <div class="input-box">
+                <input type="email" name="email" placeholder="Correo Institucional" required>
+                <i class='bx bx-user'></i>
+            </div>
+            <div class="input-box">
+                <input type="password" name="password" placeholder="Contraseña" required>
+                <i class='bx bx-lock'></i>
+            </div>
+            <div class="remember-forgot">
+                <label><input type="checkbox">Recuérdame</label>
+                <a href="#">¿Olvidaste tu contraseña?</a>
+            </div>
+            <button type="submit" class="btn">Entrar</button>
+            
+            <!-- Bloque para mostrar mensajes de error -->
+            {% if messages %}
+                <div class="error-messages">
+                    {% for message in messages %}
+                        <p class="error">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </form>
+    </div>
+</body>
+</html>
