@@ -1,126 +1,128 @@
-*{
-    margin: 0;
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+:root {
+    --color-fondo: rgb(221, 220, 220);
+    --color-texto: rgb(0, 0, 0);
+    --color-boton: rgb(37, 37, 37);
+    --color-boton-texto: rgb(0, 0, 0);
+    --color-input-fondo: #ffffff;
+    --color-input-borde: rgba(161, 161, 161, 0.2);
+    --color-mensaje-error: red;
+}
+
+* {
+    margin: 0;  
     padding: 0;
     box-sizing: border-box;
-    font-family: "Poppins", "sans-serif";
+    font-family: 'Outfit', 'Poppins', sans-serif;
 }
 
-body{
-    margin-top: 100px;
+body {
+    height: 100vh;
+    width: 100%;
+    background-color: var(--color-fondo);
     display: flex;
     justify-content: center;
-    align-self: center;
-    min-height: 50vh;
-    background: url('../../images/DUOC.jpg') no-repeat;
-    background-size: cover;
+    align-items: center;
 }
 
-.wrapper{
+.wrapper {
     width: 420px;
-    background: transparent;
-    border: 2px solid rgba(161, 161, 161, 0.2);
+    background: var(--color-input-fondo);
+    border: 2px solid var(--color-input-borde);
     backdrop-filter: blur(20px);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    color: rgb(48, 47, 134);
+    color: var(--color-texto);
     border-radius: 10px;
     padding: 30px 40px;
 }
 
-.wrapper h1{
+.wrapper h1 {
     font-size: 36px;
     text-align: center;
+    margin-bottom: 20px;
 }
 
-.wrapper .input-box{
+.input-box {
     position: relative;
     width: 100%;
     height: 50px;
-    margin: 30px 0;
+    margin: 20px 0;
 }
 
-.input-box input{
+.input-box input {
     width: 100%;
     height: 100%;
-    background: transparent;
+    background: var(--color-input-fondo);
     border: none;
     border-radius: 40px;
     outline: none;
-    border: 2px solid rgba(161, 161, 161, 0.2);
+    border: 2px solid var(--color-input-borde);
     font-size: 16px;
-    color: rgb(48, 47, 134);
-    padding: 20px 45px 20px 20px;
+    color: var(--color-texto);
+    padding: 0 20px;
+    padding-right: 45px;
 }
 
-.input-box input::placeholder{
-    color: rgb(48, 47, 134);
+.input-box input::placeholder {
+    color: var(--color-texto);
 }
 
-.input-box i{
+.input-box i {
     position: absolute;
     right: 20px;
     top: 50%;
     transform: translateY(-50%);
     font-size: 20px;
+    color: var(--color-texto);
 }
 
-.wrapper .remember-forgot{
+.remember-forgot {
     display: flex;
     justify-content: space-between;
     font-size: 14.5px;
-    margin: -15px 0 15px;
+    margin: 10px 0;
 }
 
-.wrapper .remember-forgot label input{
-    accent-color: white;
-    margin-right: 3px;
+.remember-forgot label input {
+    margin-right: 5px;
 }
 
-.wrapper .remember-forgot a{
-    color: rgb(48, 47, 134);
+.remember-forgot a {
+    color: var(--color-texto);
     text-decoration: none;
 }
 
-.wrapper .remember-forgot a:hover{
+.remember-forgot a:hover {
     text-decoration: underline;
 }
 
-.wrapper .btn{
+.btn {
     width: 100%;
     height: 45px;
-    background: #fcfcfc;
+    background: var(--color-boton);
     border: none;
     outline: none;
     border-radius: 40px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     font-size: 16px;
-    color: rgb(48, 47, 134);
+    color: var(--color-boton-texto);
     font-weight: 600;
+    transition: background 0.3s ease;
 }
 
-.wrapper .register-link{
-    font-size: 14.5px;
-    text-align: center;
-    margin: 20px 0 15px;
+.btn:hover {
+    background: rgb(60, 60, 60);
 }
 
-.register-link p a {
-    color: rgb(48, 47, 134);
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.register-link p a:hover {
-    text-decoration: underline;
-}
-
-.error-messages {
+.messages {
     margin-top: 20px;
     text-align: center;
 }
 
-.error-messages .error {
-    color: red;
+.messages p {
+    color: var(--color-mensaje-error);
     font-size: 14px;
     font-weight: bold;
 }
