@@ -9,6 +9,7 @@ from django.http import JsonResponse
 
 from .forms import LoginForm
 
+@login_required
 def obtener_horario_por_sala(request, sala_id):
     # Filtrar las reservas para la sala seleccionada
     reservas = Reserva.objects.filter(sala_id=sala_id).values('fecha_inicio', 'hora_inicio', 'hora_fin', 'nombre_evento')
@@ -63,29 +64,22 @@ def crear_reserva(request):
     return render(request, 'index.html', context)
 
 
-#login principal (registro a la vez)
+# LOGIN PRINCIPAL (SOLO INICIO DE SESIÓN)
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            username = email.split('@')[0]  # extrae el user
+            username = email.split('@')[0]  # Extrae el username del email
 
-            # autenticar usuario
+            # Autenticar usuario
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('index')  # redirige a la vista main.html si las credenciales son correctas
+                return redirect('main')  # Redirige a la vista main.html si las credenciales son correctas
             else:
-                # registrar al user si no esta registrado
-                try:
-                    user = User.objects.create_user(username=username, email=email, password=password)
-                    user.save()
-                    login(request, user)
-                    return redirect('index')  # eedirige a la vista index.html despues de crear y logear
-                except Exception as e:
-                    messages.error(request, f"Error al crear la cuenta: {e}")
+                messages.error(request, 'Usuario o contraseña incorrectos. Verifica tus datos e intenta nuevamente.')
         else:
             messages.error(request, "Credenciales no válidas. Revisa el formato del correo institucional.")
     else:
@@ -93,6 +87,9 @@ def user_login(request):
 
     return render(request, 'registration/login.html', {'form': form})
 
+
+# CERRAR SESIÓN
 def user_logout(request):
     logout(request)
+    messages.info(request, 'Has cerrado sesión.')
     return redirect('login')
