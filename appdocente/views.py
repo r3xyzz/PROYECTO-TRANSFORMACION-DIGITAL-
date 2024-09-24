@@ -2,11 +2,11 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import Reserva, Sala
 from django.http import JsonResponse
-
 from .forms import LoginForm
 
 @login_required
