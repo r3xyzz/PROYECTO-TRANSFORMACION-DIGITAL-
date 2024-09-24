@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Sala(models.Model):
     nombre = models.CharField(max_length=100)
@@ -17,3 +18,11 @@ class Reserva(models.Model):
 
     def __str__(self):
         return f"{self.nombre_evento} - {self.sala} ({self.fecha_inicio})"
+
+#perfil de uisuarios
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.role}"
