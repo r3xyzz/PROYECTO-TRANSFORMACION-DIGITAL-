@@ -57,6 +57,61 @@ body{
     top: 15px;
     z-index: 100;
 }
+/*---------------> Usuario Mejorado */
+.barra-lateral .usuario {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.barra-lateral .usuario img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.barra-lateral .info-usuario {
+    display: flex;
+    flex-direction: column;
+    color: white !important;
+}
+
+.barra-lateral .nombre-email {
+    margin-bottom: 5px;
+}
+
+.barra-lateral .nombre {
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+}
+
+.barra-lateral .email {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.barra-lateral .acciones-usuario {
+    display: flex;
+    gap: 10px;
+}
+
+.barra-lateral .acciones-usuario a {
+    text-decoration: none;
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: var(--color-boton);
+    color: white !important;
+    transition: background-color 0.3s ease;
+}
+
+.barra-lateral .acciones-usuario a:hover {
+    background-color: var(--color-menu-hover);
+}
 
 /*----------------Barra Lateral*/
 .barra-lateral{
