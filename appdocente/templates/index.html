@@ -21,6 +21,24 @@
         <ion-icon name="menu-outline"></ion-icon>
         <ion-icon name="close-outline"></ion-icon>
     </div>
+
+        <!-- Usuario en la esquina superior derecha -->
+    <div class="usuario-top-right">
+        {% if request.user.is_authenticated %}
+            <img src="{% static 'images/user_icon.png' %}" alt="User Icon" class="user-icon">
+            <div class="user-info">
+                <span class="user-name">{{ request.user.username }}</span>
+                {% if request.user.userprofile %}
+                    <span class="user-role">{{ request.user.userprofile.role }}</span>
+                {% else %}
+                    <span class="user-role">Sin rol asignado</span>
+                {% endif %}
+            </div>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn-login">Iniciar sesión</a>
+        {% endif %}
+    </div>
+    
     <div class="barra-lateral">
         <div>
             <div class="nombre-pagina">
@@ -57,26 +75,16 @@
             </ul>
         </nav>
 
-        <div>
-            <div class="usuario">
-                <img src="#" alt="">
-                <div class="info-usuario">
-                    <div class="nombre-email">
-                        <span class="nombre">{{ request.user.username }}</span>
-                        <span class="email">{{ request.user.email }}</span>
-                    </div>
-                    <div class="dropdown">
-                        <button class="dropbtn">
-                            <ion-icon name="ellipsis-vertical-outline"></ion-icon>
-                        </button>
-                        <div class="dropdown-content">
-                            <a href="{% url 'logout' %}">Cerrar sesión</a>
-                        </div>
-                    </div>
+        <div class="usuario">
+                <div class="acciones-usuario">
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'logout' %}" class="btn-logout">Cerrar sesión</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn-login">Iniciar sesión</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
-    </div>
 
 <main>
     <!-- Div para peticiones -->
