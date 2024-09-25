@@ -21,4 +21,5 @@ from appdocente import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('appdocente.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]

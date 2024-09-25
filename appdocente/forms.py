@@ -7,7 +7,7 @@ class LoginForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        valid_domains = ["@duocuc.cl", "@profesor.duoc.cl", "@profesorduoc.cl"]
+        valid_domains = ["@duocuc.cl", "@profesor.duoc.cl", "@profesorduoc.cl" , "@duoc.cl"]
         if not any(email.endswith(domain) for domain in valid_domains):
             raise ValidationError("El correo debe ser institucional.")
         return email

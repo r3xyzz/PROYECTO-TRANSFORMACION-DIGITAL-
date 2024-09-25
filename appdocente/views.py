@@ -9,12 +9,13 @@ from .models import Reserva, Sala
 from django.http import JsonResponse
 from .forms import LoginForm
 
-@login_required
+
 def obtener_horario_por_sala(request, sala_id):
     # Filtrar las reservas para la sala seleccionada
     reservas = Reserva.objects.filter(sala_id=sala_id).values('fecha_inicio', 'hora_inicio', 'hora_fin', 'nombre_evento')
     return JsonResponse({'reservas': list(reservas)})
 
+@login_required
 def index(request):
     # Obtener todas las salas y reservas para mostrarlas en el formulario y horario
     salas = Sala.objects.all()
@@ -63,7 +64,6 @@ def crear_reserva(request):
     }
     return render(request, 'index.html', context)
 
-
 # LOGIN PRINCIPAL (SOLO INICIO DE SESIÓN)
 def user_login(request):
     if request.method == 'POST':
@@ -77,7 +77,7 @@ def user_login(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('main')  # Redirige a la vista main.html si las credenciales son correctas
+                return redirect('index')  # Redirige a la vista index.html si las credenciales son correctas
             else:
                 messages.error(request, 'Usuario o contraseña incorrectos. Verifica tus datos e intenta nuevamente.')
         else:

@@ -14,25 +14,26 @@ const main = document.querySelector("main");
 
 // Sidebar interactivo
 function show(param_div_id) {
-    const x = document.getElementById("peticiones");
-    const y = document.getElementById("container");
-    const z = document.getElementById("salas");
-    const a = document.getElementById("cargar-archivo");
+    const peticiones = document.getElementById("peticiones");
+    const cargarArchivo = document.getElementById("cargar-archivo");
+    const salas = document.getElementById("salas");
 
-    x.style.display = param_div_id === "peticiones" ? "block" : "none";
-    y.style.display = param_div_id === "container" ? "block" : "none";
-    z.style.display = param_div_id === "salas" ? "block" : "none";
-    a.style.display = param_div_id === "cargar-archivo" ? "block" : "none";
+    // Ocultar/mostrar las secciones
+    peticiones.style.display = param_div_id === "peticiones" ? "block" : "none";
+    cargarArchivo.style.display = param_div_id === "cargar-archivo" ? "block" : "none";
+    salas.style.display = param_div_id === "salas" ? "block" : "none";
 
-    document.getElementById('menu1').className = param_div_id === "peticiones" ? "activate" : "deactivate";
-    document.getElementById('menu2').className = param_div_id === "cargar-archivo" ? "activate" : "deactivate";
-    document.getElementById('menu3').className = param_div_id === "salas" ? "activate" : "deactivate";
+    // Gestionar la activación/desactivación de los menús
+    document.getElementById('menu1').classList.toggle('activate', param_div_id === "peticiones");
+    document.getElementById('menu1').classList.toggle('deactivate', param_div_id !== "peticiones");
+
+    document.getElementById('menu2').classList.toggle('activate', param_div_id === "cargar-archivo");
+    document.getElementById('menu2').classList.toggle('deactivate', param_div_id !== "cargar-archivo");
+
+    document.getElementById('menu3').classList.toggle('activate', param_div_id === "salas");
+    document.getElementById('menu3').classList.toggle('deactivate', param_div_id !== "salas");
 }
 
-let selectedDate = new Date();
-let modalInstance;
-let reservas = [];
-let selectedSalaId = null;
 
 // Cargar las reservas desde el HTML al cargar el DOM
 document.addEventListener('DOMContentLoaded', function () {
