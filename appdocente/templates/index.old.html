@@ -25,7 +25,7 @@
         <!-- Usuario en la esquina superior derecha -->
     <div class="usuario-top-right">
         {% if request.user.is_authenticated %}
-            <img src="{% static 'images/user_icon.png' %}" alt="User Icon" class="user-icon">
+            <img src="" alt="User Icon" class="user-icon">
             <div class="user-info">
                 <span class="user-name">{{ request.user.username }}</span>
                 {% if request.user.userprofile %}
@@ -87,7 +87,7 @@
         </div>
 
 <main>
-    <!-- Div para peticiones -->
+    <!-- Div para peticiones
     <div class="peticiones" id="peticiones" style="display: none;">
         <header class="bg-white py-4 shadow-sm">
             <div class="container mx-auto">
@@ -119,12 +119,12 @@
                 <td>Sala 05</td>
                 <td>Aplicaciones Moviles</td>
             </tr>
-            <!-- Más filas de ejemplo -->
+            Más filas de ejemplo
         </table>
-    </div>
+    </div>-->
 
     <!-- Div para cargar archivos -->
-    <div class="cargar-archivo" id="cargar-archivo" style="display: none;">
+    <!-- <div class="cargar-archivo" id="cargar-archivo" style="display: none;">
         <header class="bg-white py-4 shadow-sm">
             <div class="container mx-auto">
                 <h1 class="text-3xl font-bold text-gray-800">Cargar Archivos</h1>
@@ -132,17 +132,20 @@
         </header>
         <div>
             <div class="upload-status text-center" id="upload-status"></div>
+            <form id="upload-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="file" id="file-input" name="archivo" style="display:none;" onchange="fileSelected(event)">
+                <button type="button" class="btn btn-primary" id="upload-button">Selecciona tu Archivo</button> 
+                <button type="submit" class="btn btn-success">Cargar Archivo</button>
+            </form>
             <div class="drag-drop-area text-center" id="drag-drop-area">
-                <input type="file" id="file-input" hidden>
-                <div class="upload-button" id="upload-button">
-                    <span>Selecciona tu Archivo</span>
-                </div>
                 <div class="drag-drop-text">
                     <span>O arrastra tu archivo aquí</span>
                 </div>
             </div>
         </div>
-    </div>
+    </div>  -->
 
     <!-- Div para ver salas -->
     <div class="salas" id="salas" style="display: none;">
@@ -247,7 +250,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{% url 'crear_reserva' %}">
+                <form enctype="multipart/form-data" method="POST" action="{% url 'crear_reserva' %}">
                     {% csrf_token %}
                     <!-- Campo oculto para almacenar el ID de la sala -->
                     <input type="hidden" id="sala-id" name="sala-id">

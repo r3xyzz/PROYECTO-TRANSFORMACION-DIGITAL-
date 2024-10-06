@@ -12,22 +12,6 @@ const circulo = document.querySelector(".circulo");
 const menu = document.querySelector(".menu");
 const main = document.querySelector("main");
 
-// Sidebar interactivo
-function show(param_div_id) {
-    const x = document.getElementById("peticiones");
-    const y = document.getElementById("container");
-    const z = document.getElementById("salas");
-    const a = document.getElementById("cargar-archivo");
-
-    x.style.display = param_div_id === "peticiones" ? "block" : "none";
-    y.style.display = param_div_id === "container" ? "block" : "none";
-    z.style.display = param_div_id === "salas" ? "block" : "none";
-    a.style.display = param_div_id === "cargar-archivo" ? "block" : "none";
-
-    document.getElementById('menu1').className = param_div_id === "peticiones" ? "activate" : "deactivate";
-    document.getElementById('menu2').className = param_div_id === "cargar-archivo" ? "activate" : "deactivate";
-    document.getElementById('menu3').className = param_div_id === "salas" ? "activate" : "deactivate";
-}
 
 let selectedDate = new Date();
 let modalInstance;
@@ -36,14 +20,71 @@ let selectedSalaId = null;
 
 // Cargar las reservas desde el HTML al cargar el DOM
 document.addEventListener('DOMContentLoaded', function () {
+    // El código existente para inicializar el calendario y reservas
     try {
         reservas = JSON.parse(document.getElementById('reservas-data').textContent);
     } catch (error) {
         console.error('Error al cargar las reservas:', error);
     }
 
-    renderCalendar(selectedDate);
-    displayWeek(startOfWeek(selectedDate));
+    // renderCalendar(selectedDate);
+    // displayWeek(startOfWeek(selectedDate));
+
+    // ---------------------------
+    // Manejo de Carga de Archivos
+    // ---------------------------
+    const uploadButton = document.getElementById('upload-button');
+    const fileInput = document.getElementById('file-input');
+    const dragDropArea = document.getElementById('drag-drop-area');
+    const uploadForm = document.getElementById('upload-form');
+
+    // Manejar clic en el botón de selección
+    if (uploadButton) {
+        uploadButton.addEventListener('click', function () {
+            fileInput.click();  // Abre el selector de archivos
+        });
+    }
+
+    // Mostrar nombre de archivo seleccionado
+    if (fileInput) {
+        fileInput.addEventListener('change', function () {
+            if (fileInput.files.length > 0) {
+                document.getElementById('upload-status').innerText = `Archivo seleccionado: ${fileInput.files[0].name}`;
+            }
+        });
+    }
+
+    // Manejar arrastrar y soltar archivos
+    if (dragDropArea) {
+        dragDropArea.addEventListener('dragover', function (event) {
+            event.preventDefault();
+            dragDropArea.classList.add('drag-over');
+        });
+
+        dragDropArea.addEventListener('dragleave', function () {
+            dragDropArea.classList.remove('drag-over');
+        });
+
+        dragDropArea.addEventListener('drop', function (event) {
+            event.preventDefault();
+            dragDropArea.classList.remove('drag-over');
+
+            if (event.dataTransfer.files.length > 0) {
+                fileInput.files = event.dataTransfer.files;  // Asigna los archivos seleccionados
+                document.getElementById('upload-status').innerText = `Archivo arrastrado: ${fileInput.files[0].name}`;
+            }
+        });
+    }
+
+    // Subir archivo al hacer clic en el botón de enviar
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', function (event) {
+            if (fileInput.files.length === 0) {
+                event.preventDefault();  // Evita enviar el formulario si no hay archivo seleccionado
+                alert('Por favor, selecciona un archivo antes de subir.');
+            }
+        });
+    }
 });
 
 // Función para renderizar el calendario con los días del mes actual

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% load bootstrap_icons %}
+
+{% block title %}
+  Bienvenida - Coordinación Docente
+{% endblock %}
+
+{% block content %}
+<div class="welcome-container">
+    <h1>Bienvenido a Coordinación Docente</h1>
+    <p>Bienvenido al sistema de Coordinación Docente. Aquí podrá gestionar sus peticiones, cargar archivos y ver las salas disponibles. Utilice el menú de la izquierda para navegar a las diferentes secciones.</p>
+    <div class="instructions">
+        <h2>Instrucciones:</h2>
+        <p><i class="bi bi-envelope"></i> <strong>Peticiones:</strong> En esta sección podrá realizar y gestionar sus peticiones.</p>
+        <p><i class="bi bi-upload"></i> <strong>Cargar Archivos:</strong> Aquí podrá cargar los archivos necesarios para sus actividades.</p>
+        <p><i class="bi bi-door-open"></i> <strong>Ver Salas:</strong> En esta sección podrá ver y reservar las salas disponibles.</p>
+    </div>
+</div>
+{% endblock %}

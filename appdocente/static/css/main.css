@@ -1,0 +1,56 @@
+body {
+  background:  #e0e0e0 !important;
+  font-size: 1rem;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#menu {
+  background-color: #333;
+  color: white;
+  height: 100vh;  
+}
+
+.main-content{
+  padding: 0%;
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  
+}
+
+.logo-duoc {
+  margin-left: 20px;
+  width: 300px;
+  height: 100px;
+}
+
+.font-content{
+  font-family: "Lato", sans-serif;
+  font-weight: bold;
+}
+
+.font-menu {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.btn-menu {
+  color: white;
+  outline: none;
+  text-decoration: none;
+}
+
+.btn-menu:hover {
+  color: #adabab;
+}
+
+.btn-menu:focus {
+  color: rgba(255, 184, 0, 1);;
+}
+
+
+

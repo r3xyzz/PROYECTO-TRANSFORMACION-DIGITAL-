@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% load bootstrap_icons %}
+
+{% block title %}
+Cargar Archivos
+{% endblock %}
+
+
+{% block content %}
+<div class="cargar-archivo">
+    <div class="container mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800">Cargar Archivos</h1>
+    </div>
+    <div>
+        <div class="upload-status text-center" id="upload-status"></div>
+        <form id="upload-form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <!-- <input type="file" id="file-input" name="archivo" style="display:none;" onchange="fileSelected(event)"> -->
+            <!-- <button type="button" class="btn btn-primary" id="upload-button">Selecciona tu Archivo</button> -->
+            <!-- <button type="submit" class="btn btn-success">Cargar Archivo</button> -->
+        </form>
+        <div class="drag-drop-area text-center" id="drag-drop-area">
+            <div class="drag-drop-text">
+                <span>O arrastra tu archivo aquí</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
