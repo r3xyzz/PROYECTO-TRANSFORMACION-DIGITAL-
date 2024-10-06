@@ -22,13 +22,3 @@ class SalaForm(forms.ModelForm):
     class Meta:
         model = Sala
         fields = ['nombre', 'tipo', 'capacidad']
-
-
-class EventForm(forms.ModelForm):
-    class Meta:
-        model = Reserva
-        fields = ["sala", "nombre_evento", "denominacion_evento", "fecha_inicio", "hora_inicio", "hora_fin"]
-        widgets = {
-            "fecha_inicio": DatePickerInput(),
-            "fecha_inicio": DatePickerInput(options={"format": "MM/DD/YYYY"}),
-        }
