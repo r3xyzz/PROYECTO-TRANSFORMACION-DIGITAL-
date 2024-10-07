@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template import loader
 from django.urls import reverse
 from django.views import generic
-from .models import Reserva, Sala, Question, CSVFile  # Import CSVFile model
+from .models import Reserva, Sala, CSVFile  # Import CSVFile model
 from .forms import LoginForm, CSVForm  # Import CSVForm
 from bootstrap_datepicker_plus.widgets import DateTimePickerInput
 
@@ -28,8 +28,8 @@ def bienvenida(request):
 def cargarArchivo(request):
     my_value = request.session.get('usuario', 'default_value')
     context = { 'usuarioSesion': my_value }
-    template = loader.get_template('cargarArchivos.html')
-    return HttpResponse(template.render(request=request, context=context))
+    form = CSVForm
+    return render(request, 'cargarArchivos.html', {'form': form})
     
 def listarPeticiones(request):
     # usuario = request.session['usuario']
@@ -46,30 +46,17 @@ def horarioSala(request):
         context = {'reservas':reservas}
 
         if reservas:
-            return render(request,'horarioSala.html',context)
-        
+            return render(request,'horarioSala.html',context) 
         else:
             return render(request,'listarSalas.html',{'mensaje':'Usuario no encontrado'})
 
 class CreateView(generic.edit.CreateView):
-    model = Question
-    fields = ["question_text", "pub_date"]
+    model = Reserva
+    fields = ['sala', 'nombre_evento', 'denominacion_evento', 'fecha_inicio', 'hora_inicio', 'hora_fin']
     def get_form(self):
         form = super().get_form()
-        form.fields["pub_date"].widget = DateTimePickerInput()
+        form.fields['fecha_inicio'].widget = DateTimePickerInput()
         return form
- 
-class UpdateView(generic.edit.UpdateView):
-    model = Question
-    fields = ['question_text', 'pub_date']
-    def get_form(self):
-        form = super().get_form()
-        form.fields['pub_date'].widget = DateTimePickerInput()
-        return form
-
-
-
-
 
 
 
