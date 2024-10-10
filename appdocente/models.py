@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 class Sala(models.Model):
+    id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
     tipo = models.CharField(max_length=50)
     capacidad = models.PositiveIntegerField()
@@ -21,7 +22,7 @@ class Reserva(models.Model):
     hora_fin = models.TimeField()
 
     def __str__(self):
-        return f"{self.nombre_evento} en {self.sala}"
+        return f"{self.nombre_evento} in {self.sala}"
 
 class CSVFile(models.Model):
     nombre = models.CharField(max_length=100)
@@ -38,3 +39,11 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
+class Peticiones(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    email = models.EmailField()
+    mensaje = models.TextField()
+
+    def __str__(self):
+        return self.nombre
