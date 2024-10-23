@@ -9,8 +9,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template import loader
 from django.urls import reverse
 from django.views import generic
-from .models import Reserva, Sala, CSVFile  # Import CSVFile model
-from .forms import LoginForm, CSVForm  # Import CSVForm
+from .models import Reserva, Recinto#, CSVFile  # Import CSVFile model
+# from .forms import LoginForm, CSVForm  # Import CSVForm
 from bootstrap_datepicker_plus.widgets import DateTimePickerInput
 
 
@@ -26,53 +26,70 @@ def bienvenida(request):
     return HttpResponse(template.render())
 
 def cargarArchivo(request):
-    my_value = request.session.get('usuario', 'default_value')
-    context = { 'usuarioSesion': my_value }
-    form = CSVForm
-    return render(request, 'cargarArchivos.html', {'form': form})
+    ''
+#     my_value = request.session.get('usuario', 'default_value')
+#     context = { 'usuarioSesion': my_value }
+#     form = CSVForm
+#     return render(request, 'cargarArchivos.html', {'form': form})
     
 def listarPeticiones(request):
-    # usuario = request.session['usuario']
-    # context = { 'usuario': usuario }
-    template = loader.get_template('listarPeticiones.html')
-    return HttpResponse(template.render())
+    ''
+    # # usuario = request.session['usuario']
+    # # context = { 'usuario': usuario }
+    # template = loader.get_template('listarPeticiones.html')
+    # return HttpResponse(template.render())
 
 def listarSalas(request):
-    return render(request,'listarSalas.html',{'salas':Sala.objects.all()})
+    ''
+    # return render(request,'listarSalas.html',{'salas':Recinto.objects.all()})
 
 def horarioSala(request):
+    ''
     # if nombre != None:
-        reservas = Reserva.objects.all()
-        context = {'reservas':reservas}
+        # reservas = Reserva.objects.all()
+        # context = {'reservas':reservas}
 
-        if reservas:
-            return render(request,'horarioSala.html',context) 
-        else:
-            return render(request,'listarSalas.html',{'mensaje':'Usuario no encontrado'})
+        # if reservas:
+        #     return render(request,'horarioSala.html',context) 
+        # else:
+        #     return render(request,'listarSalas.html',{'mensaje':'Usuario no encontrado'})
 
 class CreateView(generic.edit.CreateView):
-    model = Reserva
-    fields = ['sala', 'nombre_evento', 'denominacion_evento', 'fecha_inicio', 'hora_inicio', 'hora_fin']
-    def get_form(self):
-        form = super().get_form()
-        form.fields['fecha_inicio'].widget = DateTimePickerInput()
-        return form
+    ''
+    # model = Reserva
+    # fields = ['sala', 'nombre_evento', 'denominacion_evento', 'fecha_inicio', 'hora_inicio', 'hora_fin']
+    # def get_form(self):
+    #     form = super().get_form()
+    #     form.fields['fecha_inicio'].widget = DateTimePickerInput()
+    #     return form
 
 
 
 
 
 def obtener_datos(request):
-    salas = Sala.objects.all()
-    reservas = Reserva.objects.all()
-    reservas_json = list(reservas.values('fecha_inicio', 'hora_inicio', 'hora_fin', 'nombre_evento'))
-    return JsonResponse({'salas': list(salas.values()), 'reservas': reservas_json}, encoder=DjangoJSONEncoder)
+    ''
+    # salas = Recinto.objects.all()
+    # reservas = Reserva.objects.all()
+    # reservas_json = list(reservas.values('fecha_inicio', 'hora_inicio', 'hora_fin', 'nombre_evento'))
+    # return JsonResponse({'salas': list(salas.values()), 'reservas': reservas_json}, encoder=DjangoJSONEncoder)
 
 @login_required
 def obtener_horario_por_sala(request, sala_id):
-    # Filtrar las reservas para la sala seleccionada
-    reservas = Reserva.objects.filter(sala_id=sala_id).values('fecha_inicio', 'hora_inicio', 'hora_fin', 'nombre_evento')
-    return JsonResponse({'reservas': list(reservas)})
+    ''
+    # # Filtrar las reservas para la sala seleccionada
+    # reservas = Reserva.objects.filter(sala_id=sala_id).values('fecha_inicio', 'hora_inicio', 'hora_fin', 'nombre_evento')
+    # return JsonResponse({'reservas': list(reservas)})
+
+
+
+
+
+
+
+
+
+# ------------------------------------------- ESTE CODIGO YA VENIA COMENTADO --------------------
 
 # def crear_reserva(request):
 #     salas = Sala.objects.all()
@@ -109,26 +126,27 @@ def obtener_horario_por_sala(request, sala_id):
 
 # LOGIN PRINCIPAL (SOLO INICIO DE SESIÓN)
 def user_login(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            username = email.split('@')[0]  # Extrae el username del email
+    ''
+    # if request.method == 'POST':
+    #     form = LoginForm(request.POST)
+    #     if form.is_valid():
+    #         email = form.cleaned_data['email']
+    #         password = form.cleaned_data['password']
+    #         username = email.split('@')[0]  # Extrae el username del email
 
-            # Autenticar usuario
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('/bienvenida/')  # Redirige a la vista main.html si las credenciales son correctas
-            else:
-                messages.error(request, 'Usuario o contraseña incorrectos. Verifica tus datos e intenta nuevamente.')
-        else:
-            messages.error(request, "Credenciales no válidas. Revisa el formato del correo institucional.")
-    else:
-        form = LoginForm()
+    #         # Autenticar usuario
+    #         user = authenticate(request, username=username, password=password)
+    #         if user is not None:
+    #             login(request, user)
+    #             return redirect('/bienvenida/')  # Redirige a la vista main.html si las credenciales son correctas
+    #         else:
+    #             messages.error(request, 'Usuario o contraseña incorrectos. Verifica tus datos e intenta nuevamente.')
+    #     else:
+    #         messages.error(request, "Credenciales no válidas. Revisa el formato del correo institucional.")
+    # else:
+    #     form = LoginForm()
 
-    return render(request,'registration/login.html', {'form': form})
+    # return render(request,'registration/login.html', {'form': form})
 
 
 # CERRAR SESIÓN

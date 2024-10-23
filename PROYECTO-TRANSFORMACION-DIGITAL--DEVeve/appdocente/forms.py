@@ -1,6 +1,6 @@
 from bootstrap_datepicker_plus.widgets import DatePickerInput
 from django import forms
-from .models import Sala,Reserva
+# from .models import Sala,Reserva                              SE COMENTA POR NUEVA BD
 from .models import CSVFile
 
 class LoginForm(forms.Form):
@@ -19,6 +19,7 @@ class CSVForm(forms.ModelForm):
         return archivo
 
 class SalaForm(forms.ModelForm):
-    class Meta:
-        model = Sala
-        fields = ['nombre', 'tipo', 'capacidad']
+    ''
+    # class Meta:
+    #     model = Sala                                          SE COMENTA POR NUEVA BD
+    #     fields = ['nombre', 'tipo', 'capacidad']
