@@ -17,8 +17,8 @@ class Usuario(models.Model):
     password = models.CharField(max_length=20)
     id_cargo = models.ForeignKey(Cargo,on_delete=models.CASCADE)
 
-    def __str__(self):
-        return f'{self.pnombre} {self.snombre} {self.appaterno} {self.apmaterno}'
+    # def __str__(self):
+    #     return f'{self.pnombre} {self.snombre} {self.appaterno} {self.apmaterno}'
     
 class Sede(models.Model):
     nombre_sede = models.CharField(max_length=100)

@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template import loader
 from django.urls import reverse
 from django.views import generic
-from .models import Reserva, Recinto#, CSVFile  # Import CSVFile model
+from .models import Reserva, Recinto,Usuario#, CSVFile  # Import CSVFile model
 from .forms import LoginForm , CSVForm  # Import CSVForm
 from bootstrap_datepicker_plus.widgets import DateTimePickerInput
 
@@ -123,28 +123,48 @@ def obtener_horario_por_sala(request, sala_id):
 
 # LOGIN PRINCIPAL (SOLO INICIO DE SESIÓN)
 def user_login(request):
-    ''
-    # if request.method == 'POST':
-    #     form = LoginForm(request.POST)
-    #     if form.is_valid():
-    #         email = form.cleaned_data['email']
-    #         password = form.cleaned_data['password']
-    #         username = email.split('@')[0]  # Extrae el username del email
+    if request.method == "POST":
+        email = request.POST.get("email")
+        contraseña = request.POST.get("password")   
+        usuarios = Usuario.objects.all()
+        emailValido = False
+        passValida = False
 
-    #         # Autenticar usuario
-    #         user = authenticate(request, username=username, password=password)
-    #         if user is not None:
-    #             login(request, user)
-    #             return redirect('/bienvenida/')  # Redirige a la vista main.html si las credenciales son correctas
-    #         else:
-    #             messages.error(request, 'Usuario o contraseña incorrectos. Verifica tus datos e intenta nuevamente.')
-    #     else:
-    #         messages.error(request, "Credenciales no válidas. Revisa el formato del correo institucional.")
-    # else:
-    form = LoginForm()
+        for usuario in usuarios:
+            if usuario.correo == email:
+                emailValido=True
+            if usuario.password == contraseña:
+                passValida = True
 
-    return render(request,'registration/login.html', {'form': form})
+        if emailValido == True and passValida == True:
+            return render(request,'bienvenida.html')
+        else:
+            mensaje = "Correo o password incorrecto"
+            context={'mensaje':mensaje}
+            return render(request,"registration/login.html",context)
 
+        
+    return render(request,'registration/login.html')
+
+#     ''
+#     if request.method == 'POST':
+#         form = LoginForm(request.POST)
+#         if form.is_valid():
+#             email = form.cleaned_data['email']
+#             password = form.cleaned_data['password']
+#             username = email.split('@')[0]  # Extrae el username del email
+
+#     #         # Autenticar usuario
+#             user = authenticate(request, username=username, password=password)
+#             if user is not None:
+#                 login(request, user)
+#                 return redirect('/bienvenida/')  # Redirige a la vista main.html si las credenciales son correctas
+#             else:
+#                 messages.error(request, 'Usuario o contraseña incorrectos. Verifica tus datos e intenta nuevamente.')
+#         else:
+#              messages.error(request, "Credenciales no válidas. Revisa el formato del correo institucional.")
+#     else:
+   
 
 # CERRAR SESIÓN
 def user_logout(request):

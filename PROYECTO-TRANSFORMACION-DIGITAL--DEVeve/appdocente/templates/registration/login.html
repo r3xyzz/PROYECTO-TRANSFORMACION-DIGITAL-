@@ -24,13 +24,20 @@
         <div class="row">
             <div class="col-3 font-menu">
                 <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg" alt="logo" class="logo-duoc">
-            </div>
+            
         </div>
+    </div>
+    {% if mensaje %}
+    <div class="text-center text-white bg-green py-2 px-10">
+        {{mensaje}}
+    </div>
+{% endif %}
     </nav>
     <main class="container-fluid main-content">
+      
 
         <div class="div-ini">    
-            <form class="form-style" method="post">
+            <form class="form-style" method="POST">
                 {% csrf_token %} 
                 <h2>Iniciar Sesión</h2>
 
