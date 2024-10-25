@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Iniciar Sesión{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap" 
+        rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap"
+        rel="stylesheet">
+
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% load bootstrap_icons %}   
+</head>
+<body>
+    <nav class="navbar container-fluid">
+        <div class="row">
+            <div class="col-3 font-menu">
+                <img src="https://www.duoc.cl/wp-content/themes/wordpress-duoc-cl/images/logo-duoc.svg" alt="logo" class="logo-duoc">
+            </div>
+        </div>
+    </nav>
+    <main class="container-fluid main-content">
+
+        <div class="div-ini">    
+            <form class="form-style" method="post">
+                {% csrf_token %} 
+                <h2>Iniciar Sesión</h2>
+
+                <div class="mb-3">
+                <label for="InputEmail1" class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" id="InputEmail1" placeholder="Ingresa tu Correo Institucional" required>
+                </div>
+
+                <div class="mb-3">
+                <label for="InputPassword1" class="form-label">Contraseña</label>
+                <input type="password" name="password" class="form-control" id="InputPassword1" placeholder="Ingresa tu contraseña" required>
+                </div>
+
+                <button type="submit" class="btn btn-warning">Iniciar Sesión</button>
+
+                <div class="mb-3">
+                    <label><input type="checkbox">Recuérdame</label>
+                    <a href="#">¿Olvidaste tu contraseña?</a>
+                </div>
+                
+                <!-- Bloque para mostrar mensajes de error -->
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            <p class="{{ message.tags }}">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <span class="text-muted">© 2024 DuocUC</span>
+        </div>   
+    </footer>
+</body>
+</html>
