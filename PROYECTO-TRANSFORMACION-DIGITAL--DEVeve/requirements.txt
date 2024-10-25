@@ -1,3 +1,4 @@
 pip install django
 pip install django-bootstrap-v5
 pip install django-bootstrap-icons
+pip install django-bootstrap-datepicker-plus

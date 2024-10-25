@@ -70,13 +70,13 @@ class Reserva(models.Model):
 
 
 
-# CLASE QUE VENIA EN EL CODIGO ANTERIOR
-# class CSVFile(models.Model):
-#     nombre = models.CharField(max_length=100)
-#     archivo = models.FileField(upload_to='csvs/')
-#     subido_el = models.DateTimeField(auto_now_add=True)
+ 
+class CSVFile(models.Model):
+    nombre = models.CharField(max_length=100)
+    archivo = models.FileField(upload_to='csvs/')
+    subido_el = models.DateTimeField(auto_now_add=True)
 
-#     def __str__(self):
-#         return self.nombre
+    def __str__(self):
+        return self.nombre
 
 

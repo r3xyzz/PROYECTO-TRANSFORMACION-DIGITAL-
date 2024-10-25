@@ -10,7 +10,7 @@ from django.template import loader
 from django.urls import reverse
 from django.views import generic
 from .models import Reserva, Recinto#, CSVFile  # Import CSVFile model
-# from .forms import LoginForm, CSVForm  # Import CSVForm
+from .forms import LoginForm , CSVForm  # Import CSVForm
 from bootstrap_datepicker_plus.widgets import DateTimePickerInput
 
 
@@ -29,30 +29,27 @@ def cargarArchivo(request):
     ''
 #     my_value = request.session.get('usuario', 'default_value')
 #     context = { 'usuarioSesion': my_value }
-#     form = CSVForm
-#     return render(request, 'cargarArchivos.html', {'form': form})
+    form = CSVForm
+    return render(request, 'cargarArchivos.html', {'form': form})
     
 def listarPeticiones(request):
-    ''
     # # usuario = request.session['usuario']
     # # context = { 'usuario': usuario }
-    # template = loader.get_template('listarPeticiones.html')
-    # return HttpResponse(template.render())
+    template = loader.get_template('listarPeticiones.html')
+    return HttpResponse(template.render())
 
 def listarSalas(request):
-    ''
-    # return render(request,'listarSalas.html',{'salas':Recinto.objects.all()})
+    return render(request,'listarSalas.html',{'salas':Recinto.objects.all()})
 
 def horarioSala(request):
-    ''
-    # if nombre != None:
-        # reservas = Reserva.objects.all()
-        # context = {'reservas':reservas}
+    #if nombre != None:                  nombre ??? -- de donde viene?
+        reservas = Reserva.objects.all()
+        context = {'reservas':reservas}
 
-        # if reservas:
-        #     return render(request,'horarioSala.html',context) 
-        # else:
-        #     return render(request,'listarSalas.html',{'mensaje':'Usuario no encontrado'})
+        if reservas:
+            return render(request,'horarioSala.html',context) 
+        else:
+            return render(request,'listarSalas.html',{'mensaje':'Usuario no encontrado'})
 
 class CreateView(generic.edit.CreateView):
     ''
@@ -144,9 +141,9 @@ def user_login(request):
     #     else:
     #         messages.error(request, "Credenciales no válidas. Revisa el formato del correo institucional.")
     # else:
-    #     form = LoginForm()
+    form = LoginForm()
 
-    # return render(request,'registration/login.html', {'form': form})
+    return render(request,'registration/login.html', {'form': form})
 
 
 # CERRAR SESIÓN
