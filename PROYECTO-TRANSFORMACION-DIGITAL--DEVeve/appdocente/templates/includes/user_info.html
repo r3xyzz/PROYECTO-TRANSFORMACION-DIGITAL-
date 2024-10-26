@@ -1,0 +1,13 @@
+{% load static %}
+<!-- includes/user_info.html -->
+<div class="user-info-container">
+    {% if request.session.email %}
+        <img src="{% static 'images/user_icon.png' %}" alt="User Icon" class="user-icon">
+        <div class="user-info">
+            <!-- Muestra el correo del usuario desde la sesión -->
+            <span class="user-email">{{ request.session.email }}</span>
+        </div>
+    {% else %}
+        <a href="{% url 'login' %}" class="btn-login">Iniciar sesión</a>
+    {% endif %}
+</div>

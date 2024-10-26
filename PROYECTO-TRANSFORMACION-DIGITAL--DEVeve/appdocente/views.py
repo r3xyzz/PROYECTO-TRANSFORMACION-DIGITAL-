@@ -149,21 +149,24 @@ def user_login(request):
 
         for usuario in usuarios:
             if usuario.correo == email and usuario.password == contraseña:
-                emailValido=True
+                emailValido = True
                 passValida = True
                 cargo = usuario.id_cargo.nombre_cargo 
 
-        if emailValido == True and passValida == True and cargo == 'docente':
+        if emailValido and passValida:
             request.session["email"] = email
-            return render(request,'HomePageDocente.html')
-        elif emailValido == True and passValida == True and cargo == 'administrador':
-            return render(request,'bienvenida.html')
+            print("Correo almacenado en sesión:", request.session["email"])  # Agrega esta línea para verificar
+            if cargo == 'docente':
+                return render(request, 'HomePageDocente.html')
+            elif cargo == 'administrador':
+                return render(request, 'bienvenida.html')
         else:
             mensaje = "Correo o password incorrecto"
-            context={'mensaje':mensaje}
-            return render(request,"registration/login.html",context)
+            context = {'mensaje': mensaje}
+            return render(request, "registration/login.html", context)
 
-    return render(request,'registration/login.html')
+    return render(request, 'registration/login.html')
+
 
 #     ''
 #     if request.method == 'POST':

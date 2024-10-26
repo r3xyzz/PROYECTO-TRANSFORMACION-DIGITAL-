@@ -49,23 +49,19 @@
                 </ul>
             </div>
             <main class="col-9 container-fluid main-content">
-                <!-- Usuario en la esquina superior derecha -->
-                <div class="">
-                    {% if request.user.is_authenticated %}
-                    <img src="{% static 'images/user_icon.png' %}" alt="User Icon" class="user-icon">
-                    <div class="user-info">
-                        <span class="user-name">{{ request.user.username }}</span>
-                        {% if request.user.userprofile %}
-                        <span class="user-role">{{ request.user.userprofile.role }}</span>
+                    <!-- Usuario en la esquina superior derecha -->
+                    {% include 'includes/user_info.html' %}
+                    <div class="">
+                        {% if request.user.is_authenticated or request.session.email %}
+                            <img src="{% static 'images/user_icon.png' %}" alt="User Icon" class="user-icon">
+                            <div class="user-info">
+                                <!-- Muestra el correo del usuario desde la sesión -->
+                                <span class="user-email">{{ request.session.email }}</span>
+                            </div>
                         {% else %}
-                        <span class="user-role">Sin rol asignado</span>
+                            <a href="{% url 'login' %}" class="btn-login">Iniciar sesión</a>
                         {% endif %}
                     </div>
-                    {% else %}
-                    <a href="{% url 'login' %}" class="btn-login">Iniciar sesión</a>
-                    {% endif %}
-                </div>
-
                 {% block content %}
                 {% endblock %}
             </main>

@@ -30,9 +30,7 @@
             <div id="menu" class="col-3 font-menu">
                 <a href="/homeDocentes"><img src="{% static 'images/logo-duoc.svg' %}" alt="logo" class="logo-duoc"></a>
                 <br>
-                <!-- <a href="#" class="boton">
-                    <span>Reservar Hora</span>
-                </a> -->
+                <!-- Menú de navegación -->
                 <ul style="list-style: none">
                     <li><a href="/hacerReserva/" class="btn-menu">
                             <!-- {% bs_icon 'check2-square' %} -->- Hacer una reserva</a> 
@@ -42,29 +40,14 @@
                     </li>
                     <li><a href="/login/" class="btn-menu">
                         <!-- {% bs_icon 'calendar-event' %} --><span>- Cerrar sesión</span></a>
-                </li>
+                    </li>
                 </ul>
             </div>
             <main class="col-9 container-fluid main-content">
                 <!-- Usuario en la esquina superior derecha -->
-                <!-- <div class="">
-                    {% if request.user.is_authenticated %}
-                    <img src="{% static 'images/user_icon.png' %}" alt="User Icon" class="user-icon">
-                    <div class="user-info">
-                        <span class="user-name">{{ request.user.username }}</span>
-                        {% if request.user.userprofile %}
-                        <span class="user-role">{{ request.user.userprofile.role }}</span>
-                        {% else %}
-                        <span class="user-role">Sin rol asignado</span>
-                        {% endif %}
-                    </div>
-                    {% else %}
-                    <a href="{% url 'login' %}" class="btn-login">Iniciar sesión</a>
-                    {% endif %}
-                </div> -->
+                {% include 'includes/user_info.html' %} <!-- Aquí se incluye el fragmento de usuario -->
 
                 {% block content %}
-                
                 {% endblock %}
             </main>
         </div>
