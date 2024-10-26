@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock %}</title>
+    <title>Reservas Docentes DuocUC</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <!-- <link rel="stylesheet" href="{% static 'css/styles.css' %}"> -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,29 +28,26 @@
     <div class="container-fluid">
         <div class="row">
             <div id="menu" class="col-3 font-menu">
-                <a href="/bienvenida/"><img src="{% static 'images/logo-duoc.svg' %}" alt="logo" class="logo-duoc"></a>
+                <a href="/homeDocentes"><img src="{% static 'images/logo-duoc.svg' %}" alt="logo" class="logo-duoc"></a>
                 <br>
                 <!-- <a href="#" class="boton">
                     <span>Reservar Hora</span>
                 </a> -->
                 <ul style="list-style: none">
-                    <li><a href="/listar_peticiones/" class="btn-menu">
-                            <!-- {% bs_icon 'check2-square' %}-->- Ver resevas</a> 
+                    <li><a href="/hacerReserva/" class="btn-menu">
+                            <!-- {% bs_icon 'check2-square' %} -->- Hacer una reserva</a> 
                     </li>
-                    <li><a href="/cargar_archivos/" class="btn-menu">
-                            <!-- {% bs_icon 'upload' %}--><span>- Cargar Archivos</span></a> 
-                    </li>
-                    <li><a href="/listadoDocentes/" class="btn-menu">
-                            <!-- {% bs_icon 'calendar-event' %}--><span>- Ver docentes</span></a> 
+                    <li><a href="/verReservas/" class="btn-menu">
+                            <!-- {% bs_icon 'calendar-event' %} --><span>- Ver reservas realizadas</span></a>
                     </li>
                     <li><a href="/login/" class="btn-menu">
-                        <!-- {% bs_icon 'calendar-event' %}--><span>- Cerrar sesión</span></a> 
+                        <!-- {% bs_icon 'calendar-event' %} --><span>- Cerrar sesión</span></a>
                 </li>
                 </ul>
             </div>
             <main class="col-9 container-fluid main-content">
                 <!-- Usuario en la esquina superior derecha -->
-                <div class="">
+                <!-- <div class="">
                     {% if request.user.is_authenticated %}
                     <img src="{% static 'images/user_icon.png' %}" alt="User Icon" class="user-icon">
                     <div class="user-info">
@@ -64,9 +61,10 @@
                     {% else %}
                     <a href="{% url 'login' %}" class="btn-login">Iniciar sesión</a>
                     {% endif %}
-                </div>
+                </div> -->
 
                 {% block content %}
+                
                 {% endblock %}
             </main>
         </div>

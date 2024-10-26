@@ -35,8 +35,24 @@ def cargarArchivo(request):
 def listarPeticiones(request):
     # # usuario = request.session['usuario']
     # # context = { 'usuario': usuario }
-    template = loader.get_template('listarPeticiones.html')
-    return HttpResponse(template.render())
+    reservasTotal = []
+    for reservas in Reserva.objects.all():
+        reservasTotal.append({
+                'docente':reservas.id_usuario.correo,
+                'sala':reservas.id_recinto.nombre_recinto,
+                'asignatura':reservas.id_asignatura.nombre,
+                'fecha':reservas.fecha,
+                'horaInicio':reservas.hra_inicio,
+                'horaFin':reservas.hra_fin,
+                'estado':reservas.estado
+        })    
+    context ={"reservas":reservasTotal}
+    return render(request,'listarPeticiones.html',context)
+
+
+
+    # template = loader.get_template('listarPeticiones.html')
+    # return HttpResponse(template.render())
 
 def listarSalas(request):
     return render(request,'listarSalas.html',{'salas':Recinto.objects.all()})
@@ -129,21 +145,24 @@ def user_login(request):
         usuarios = Usuario.objects.all()
         emailValido = False
         passValida = False
+        cargo = ''
 
         for usuario in usuarios:
-            if usuario.correo == email:
+            if usuario.correo == email and usuario.password == contraseña:
                 emailValido=True
-            if usuario.password == contraseña:
                 passValida = True
+                cargo = usuario.id_cargo.nombre_cargo 
 
-        if emailValido == True and passValida == True:
+        if emailValido == True and passValida == True and cargo == 'docente':
+            request.session["email"] = email
+            return render(request,'HomePageDocente.html')
+        elif emailValido == True and passValida == True and cargo == 'administrador':
             return render(request,'bienvenida.html')
         else:
             mensaje = "Correo o password incorrecto"
             context={'mensaje':mensaje}
             return render(request,"registration/login.html",context)
 
-        
     return render(request,'registration/login.html')
 
 #     ''
@@ -171,3 +190,57 @@ def user_logout(request):
     logout(request)
     messages.info(request, 'Has cerrado sesión.')
     return redirect('login')
+
+
+
+
+#apartado admin
+
+def listadoDocentes(request):
+    if request.method == 'GET':
+        docentes = []
+        for u in Usuario.objects.all():
+            if u.id_cargo.nombre_cargo == 'docente':
+
+                docentes.append({
+                    'nombre':u.pnombre + ' ' + u.snombre + ' ' + u.appaterno + ' ' + u.apmaterno,
+                    'correo': u.correo
+                    })
+        context = {"usuarios":docentes}
+        return render(request,'ListadoDocentesAdminPage.html',context)
+    
+    if request.method == 'POST':
+        return render(request,'ListadoDocentesAdminPage.html')
+
+
+# apartado docente 
+
+def homeDocentes(request):
+    return render(request,'HomePageDocente.html')
+
+def hacerReserva(request):
+    salasTotales = []
+    for sala in Recinto.objects.all():
+        salasTotales.append(sala.nombre_recinto)
+    context={"salas":salasTotales}
+
+    return render(request,'HacerReservaDocentePage.html',context)
+
+def verReservas(request):
+    if request.method == 'GET':
+        email = request.session["email"]
+        reservasUsuario= []
+        for res in Reserva.objects.all():
+            if res.id_usuario.correo == email:
+                reservasUsuario.append({
+                    'sala':res.id_recinto.nombre_recinto,
+                    'asignatura':res.id_asignatura.nombre,
+                    'fecha':res.fecha,
+                    'horaInicio':res.hra_inicio,
+                    'horaFin':res.hra_fin,
+                    'estado':res.estado
+                })
+        context ={"reservas":reservasUsuario}
+        return render(request,'VerReservasDocentePage.html',context)
+    else:
+        return render(request,'VerReservasDocentePage.html')

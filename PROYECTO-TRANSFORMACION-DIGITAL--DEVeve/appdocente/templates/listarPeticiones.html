@@ -18,7 +18,14 @@ Peticiones Pendientes
         <h1 class="text-3xl font-bold text-gray-800">Peticiones</h1>
     </div>
 
-    <div class="busqueda">
+    <div>
+        <label >Filtra por ID</label>
+        <div class="d-flex ">
+            <input class="input-form input form-control" type="text" placeholder="Ingresa email del docente">
+            <button class="btn btn-primary">Buscar</button>
+        </div>
+    </div>
+    <!-- <div class="busqueda">
         <h1>Buscar</h1>
         <input type="text" id="buscar">
         <ion-icon class="icon" name="search-outline"></ion-icon>
@@ -43,7 +50,29 @@ Peticiones Pendientes
             <td>Sala 05</td>
             <td>Aplicaciones Moviles</td>
         </tr>
-        <!-- Más filas de ejemplo -->
-    </table>
+        
+    </table>-->
+
+    {% for reserva in reservas %}
+    <div class="d-flex mt-2 "> 
+        <h5>{{reserva.docente}}</h5>
+        <h5 class="me-5">{{reserva.sala}}</h5>
+        <h5 class="me-5">{{reserva.asignatura}}</h5>
+        <h5 class="me-5">{{reserva.fecha}}</h5>
+        <h5 class="me-5">{{reserva.horaInicio}}</h5>
+        <h5 class="me-5">{{reserva.horaFin}}</h5>
+        {% if reserva.estado == 'pendiente' %}
+            <h5 class="text-warning">PENDIENTE</h5>
+        {% endif%}
+        {% if reserva.estado == 'aprobado' %}
+            <h5 class="text-success">APROBADO</h5>
+        {% endif%}
+        {% if reserva.estado == 'rechazado' %}
+            <h5 class="text-danger">RECHAZADO</h5>
+        {% endif%}
+        <button class="btn-success btn">Aprobar</button>
+        <button class="btn-danger btn">Rechazar</button>
+    </div>
+{% endfor %}
 </div>
 {% endblock %}

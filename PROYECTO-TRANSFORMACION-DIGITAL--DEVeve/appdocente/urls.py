@@ -13,5 +13,14 @@ urlpatterns = [
     # path('api/horario/<int:sala_id>/', views.obtener_horario_por_sala, name='obtener_horario_por_sala'),
     path('login/', user_login, name='login'),
     path('logout/', user_logout, name='logout'),
+
+
+    path('listadoDocentes/',views.listadoDocentes,name='listado docentes'),
+
+
+    path('homeDocentes/',views.homeDocentes,name='home docentes'),
+    path('hacerReserva/',views.hacerReserva, name='Hacer reserva'),
+    path('verReservas/',views.verReservas,name='Ver Reservas')
+
 ]
 
