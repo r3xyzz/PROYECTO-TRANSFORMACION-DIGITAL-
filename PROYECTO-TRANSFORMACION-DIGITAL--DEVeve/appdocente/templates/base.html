@@ -50,7 +50,7 @@
             </div>
             <main class="col-9 container-fluid main-content">
                     <!-- Usuario en la esquina superior derecha -->
-                    {% include 'includes/user_info.html' %}
+                    
                     <div class="">
                         {% if request.user.is_authenticated or request.session.email %}
                             <img src="{% static 'images/user_icon.png' %}" alt="User Icon" class="user-icon">
