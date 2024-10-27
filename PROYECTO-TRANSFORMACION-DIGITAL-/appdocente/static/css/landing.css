@@ -1,0 +1,109 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/******************* Fotos SEDES *********************************/
+.foto {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.foto div {
+    position: absolute;
+    height: 196px;
+    width: 132px;
+    background-color:#FFB800;
+    border: 4px solid #FFB800;
+    border-bottom: 40px solid #FFB800;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 8%;
+    box-shadow: #27272792 -2px 2px 4px;
+    transform-origin: bottom left;
+    scale: 1;
+    transition-duration: 300ms;
+    overflow: hidden;
+}
+
+.foto div:hover {
+    scale: 1.3;
+}
+
+.foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+/* Fotos individuales: */
+.foto div:nth-child(n) {
+    transform: rotate(0deg) translate(0px, -20px);
+}
+
+.foto:hover div:nth-child(1) {
+    transform: rotate(-54deg) translate(0px, -30px);
+}
+.foto:hover div:nth-child(2) {
+    transform: rotate(-36deg) translate(0px, -30px);
+}
+.foto:hover div:nth-child(3) {
+    transform: rotate(-18deg) translate(0px, -30px);
+}
+.foto:hover div:nth-child(4) {
+    transform: rotate(0deg) translate(0px, -30px);
+}
+.foto:hover div:nth-child(5) {
+    transform: rotate(18deg) translate(0px, -30px);
+}
+.foto:hover div:nth-child(6) {
+    transform: rotate(36deg) translate(0px, -30px);
+}
+.foto:hover div:nth-child(7) {
+    transform: rotate(54deg) translate(0px, -30px);
+}
+/******************* Fotos SEDES *********************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/***************** BOTON LOGIN *************************************/
+
+
+
+
+
+
+
+/***************** BOTON LOGIN *************************************/

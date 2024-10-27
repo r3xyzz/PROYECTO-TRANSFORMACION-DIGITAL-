@@ -1,0 +1,180 @@
+#menu {
+  background-color: #00084d;
+  width: calc(100% - 7%); /* Reducimos el ancho para separarla de los lados */
+  height: auto;
+  padding: 20px ;
+  margin: 20px ; /* Añadimos margen para separarla de la parte superior y los lados */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  position: fixed;
+  z-index: 1000;
+  border-radius: 40px;
+  box-shadow: -8px -8px 30px #000000c5;
+}
+
+.logo-duoc {
+  width: 90%; /* Ajusta el tamaño como un porcentaje del contenedor */
+
+  height: auto; /* Mantiene la relación de aspecto */
+  margin-left: 10px; /* Espacio a la izquierda */
+  filter: drop-shadow(0 0 15px #ffb700);
+}
+
+
+ul {
+  padding-left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  width: 100%;
+}
+
+ul li {
+  margin: 0 5px;
+}
+/************* Botones de VISTAS ***********************************/
+
+.btn-menu {
+  display: inline-block;
+
+  font-weight: bold;  
+  border-radius: 25%;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 0.3;
+
+  color: white;
+  font-size: 2.8vw;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+}
+
+.btn-menu {
+  overflow: hidden;
+}
+
+.btn-menu:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(255, 255, 255);
+  transition: left 0.3s ease-in-out;
+  z-index: -1;
+}
+
+.btn-menu:hover:before {
+  left: 0%;
+}
+
+.btn-menu:after {
+  content: "";
+  position: absolute;
+  bottom: 50%;
+  right: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(255, 255, 255);
+  transition: right 0.3s ease-in-out;
+  z-index: -1;
+}
+
+.btn-menu:hover:after {
+  right: 0%;
+}
+
+/************* Botones de VISTAS ***********************************/
+
+
+/* *********************FONDO ANIMADO*********************** */
+.fondo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%; /* Cambiado a 100% para cubrir toda la pantalla */
+  height: 100%; /* Cambiado a 100% para cubrir toda la pantalla */
+  z-index: -1; 
+
+
+  background: linear-gradient(
+    135deg,
+    #eeeeee 25%,
+    #ffffff 25%,
+    #ffffff 50%,
+    #eeeeee 50%,
+    #eeeeee 75%,
+    #ffffff 75%,
+    #ffffff
+/* para fondito oscuro: */
+    /* #121212 25%,
+    #1a1a1a 25%,
+    #1a1a1a 50%,
+    #121212 50%,
+    #121212 75%,
+    #1a1a1a 75%,
+    #1a1a1a */
+  );
+  background-size: 40px 40px;
+
+  /* Animación */
+  animation: move 6s linear infinite;
+}
+
+@keyframes move {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 40px;
+  }
+}
+/* *********************FONDO ANIMADO*********************** */
+
+
+
+.btn-login{
+  width: 160px;
+  height: 35px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #10006c;
+  font-weight: 700;
+  position: relative;
+  transition: all 0.3s;
+  z-index: 1;
+  position: fixed; /* Mantener el botón en una posición fija */
+  bottom: 20px; /* Distancia desde la parte inferior de la pantalla */
+  left: 50%; /* Centrar horizontalmente */
+  transform: translateX(-50%); /* Ajustar el centrado */
+  padding-left: 20px;
+ }
+ 
+ .btn-login::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background-color: #10006c;
+  z-index: -1;
+  transition: all 0.3s;
+ }
+ 
+ .btn-login:hover::before {
+  width: 100%;
+ }
+ 
+ .btn-login:hover {
+  color: #ffffff;
+ }
+ 
+ .btn-login:active:before {
+  background: #ffffff00;
+ }

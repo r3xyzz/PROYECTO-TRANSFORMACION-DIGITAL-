@@ -1,0 +1,73 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+    <title>Proyecto Coordinación Docente</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% load bootstrap_icons %}
+</head>
+
+
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h1 class="display-4">Bienvenido al Proyecto de Coordinación Docente</h1>
+                <p class="lead">Una iniciativa para mejorar la gestión y coordinación de los docentes.</p>
+                <hr class="my-4">
+
+                
+                <p>Explora las funcionalidades y descubre cómo podemos ayudarte a optimizar tus tareas diarias.</p>
+
+
+
+                <!----------- Fotos SEDES ------------------------------------------->
+                <div class="foto">
+                    <div>
+                        <img src="../static/images/sedes_duoc/Carlos.jpg">
+                    </div>
+                    <div>
+                         <img src="../static/images/sedes_duoc/oeste.png">
+                    </div>
+                    <div>
+                        <img src="../static/images/sedes_duoc/Alameda.jpg">
+                    </div>
+                    <div>
+                        <img src="../static/images/sedes_duoc/maipu.jpg">
+                    </div>
+                    <div>
+                        <img src="../static/images/sedes_duoc/vespucio.jpg">
+                    </div>
+                    <div>
+                        <img src="../static/images/sedes_duoc/valparaiso.jpg">
+                    </div>
+                    <div>
+                        <img src= "../static/images/sedes_duoc/viña.jpg">
+                    </div>
+                </div>
+                <!----------- Fotos SEDES ------------------------------------------->
+
+
+                <a class="btn btn-primary btn-lg" href="/login/" role="button">Iniciar Sesión</a>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+</body>
+
+
+
+</html>
