@@ -33,21 +33,25 @@ def cargarArchivo(request):
     return render(request, 'cargarArchivos.html', {'form': form})
     
 def listarPeticiones(request):
-    # # usuario = request.session['usuario']
-    # # context = { 'usuario': usuario }
+    correo = request.GET.get('correo', '')  # Obtiene el correo desde la URL (parámetro GET)
     reservasTotal = []
-    for reservas in Reserva.objects.all():
+
+    #filtro por correo
+    reservas_filtradas = Reserva.objects.filter(id_usuario__correo__icontains=correo)
+
+    for reserva in reservas_filtradas:
         reservasTotal.append({
-                'docente':reservas.id_usuario.correo,
-                'sala':reservas.id_recinto.nombre_recinto,
-                'asignatura':reservas.id_asignatura.nombre,
-                'fecha':reservas.fecha,
-                'horaInicio':reservas.hra_inicio,
-                'horaFin':reservas.hra_fin,
-                'estado':reservas.estado
-        })    
-    context ={"reservas":reservasTotal}
-    return render(request,'listarPeticiones.html',context)
+            'docente': reserva.id_usuario.correo,
+            'sala': reserva.id_recinto.nombre_recinto,
+            'asignatura': reserva.id_asignatura.nombre,
+            'fecha': reserva.fecha,
+            'horaInicio': reserva.hra_inicio,
+            'horaFin': reserva.hra_fin,
+            'estado': reserva.estado
+        })
+    
+    context = {"reservas": reservasTotal, "correo": correo}
+    return render(request, 'listarPeticiones.html', context)
 
 
 
