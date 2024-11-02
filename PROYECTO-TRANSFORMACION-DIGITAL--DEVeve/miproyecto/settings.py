@@ -31,6 +31,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGIN_URL = '/login/'
+
 
 # Application definition
 
@@ -70,6 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'appdocente.context_processors.grupos_usuario',
             ],
         },
     },
@@ -81,13 +84,23 @@ WSGI_APPLICATION = 'miproyecto.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
-}
+}"""
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'coordinacion_docente',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',   # O usa la IP si tu base de datos está en otro servidor
+        'PORT': '3306',        # El puerto por defecto de MySQL es 3306
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

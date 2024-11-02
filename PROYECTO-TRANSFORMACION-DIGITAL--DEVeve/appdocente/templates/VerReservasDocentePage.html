@@ -1,33 +1,41 @@
-{% extends "baseDocentePage.html" %}
+{% extends "base.html" %}
 {% block content %}
     <h1 class="text-center">Ver reservas</h1>
     <div class="mt-4">
         <h3 class="text-center">Listado de reservas realizadas</h3>
     </div>
-    <div class="mt-5">
-        {% for reserva in reservas %}
-            <div class="d-flex mt-2 ">
-                <h5 class="me-5">{{reserva.sala}}</h5>
-                <h5 class="me-5">{{reserva.asignatura}}</h5>
-                <h5 class="me-5">{{reserva.fecha}}</h5>
-                <h5 class="me-5">{{reserva.horaInicio}}</h5>
-                <h5 class="me-5">{{reserva.horaFin}}</h5>
-                {% if reserva.estado == 'pendiente' %}
-                    <button class="btn-warning btn">Pendiente</button>
-                {% endif%}
-                {% if reserva.estado == 'aprobado' %}
-                    <button class="btn-success btn">Aprobado</button>
-                {% endif%}
-                {% if reserva.estado == 'rechazado' %}
-                    <button class="btn-danger btn">Rechazado</button>
-                {% endif%}
-
-
-            </div>
-        {% endfor %}
+    <div class="table-responsive mt-5">
+        <table class="table bg-white table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Sala</th>
+                    <th>Recurso</th>
+                    <th>Fecha</th>
+                    <th>Hora Inicio</th>
+                    <th>Hora Fin</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reserva in reservas %}
+                    <tr>
+                        <td>{{ reserva.recursos }}</td>
+                        <td>{{ reserva.tipo_recurso }}</td>
+                        <td>{{ reserva.fecha_inicio }}</td>
+                        <td>{{ reserva.hora_inicio }}</td>
+                        <td>{{ reserva.hora_final }}</td>
+                        <td>
+                            {% if reserva.estado == 0 %}
+                                <span class="text-warning fw-bold">PENDIENTE</span>
+                            {% elif reserva.estado == 1 %}
+                                <span class="text-success fw-bold">APROBADO</span>
+                            {% elif reserva.estado == 2 %}
+                                <span class="text-danger fw-bold">RECHAZADO</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-
-
-
-
 {% endblock %}

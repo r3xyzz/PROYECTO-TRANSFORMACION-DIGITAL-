@@ -1,282 +1,160 @@
-{% extends "baseDocentePage.html" %}
+{% extends "base.html" %}
 {% block content %}
+
+    {% load custom_filters %} 
+
+    <style>
+        .ocupado {
+            background-color: red;
+            color: white;
+        }
+        .libre {
+            background-color: green;
+            color: white;
+        }
+    </style>
+
+    <script>
+        function abrirModal(recurso, fechaInicio, horaInicio, horaFin) {
+            // Asigna los valores al modal
+            document.getElementById('modalRecursos').value = recurso;
+            document.getElementById('modalFechaInicio').value = fechaInicio;
+            document.getElementById('modalHoraInicio').value = horaInicio;
+            document.getElementById('modalHoraFin').value = horaFin;
+    
+            // Llenar las opciones del selector de semana
+            llenarOpcionesSemana(fechaInicio);
+    
+            // Mostrar el modal
+            var modal = new bootstrap.Modal(document.getElementById('reservaModal'));
+            modal.show();
+        }
+        
+        function llenarOpcionesSemana(fechaInicio) {
+            const selectSemana = document.getElementById('modalSemana');
+            selectSemana.innerHTML = ''; // Limpiar las opciones previas
+    
+            // Extraer año, mes y día de fechaInicio
+            const partesFecha = fechaInicio.split('-');
+            const anio = parseInt(partesFecha[0], 10);
+            const mes = parseInt(partesFecha[1], 10) - 1;
+            const dia = parseInt(partesFecha[2], 10);
+    
+            let fechaActual = new Date(anio, mes, dia);
+            const diaSeleccionado = fechaActual.getDay(); // Día de la semana de la fecha seleccionada
+    
+            // Cambiar el texto del label según el día de la semana seleccionado
+            const diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+            document.getElementById('labelDiaSemana').textContent = `Seleccione ${diasSemana[diaSeleccionado]}`;
+    
+            // Asegurarnos de que el bucle comienza en el día seleccionado
+            while (fechaActual.getDay() !== diaSeleccionado) {
+                fechaActual.setDate(fechaActual.getDate() + 1);
+            }
+    
+            // Función para formatear la fecha en formato YYYY-MM-DD
+            function formatearFecha(fecha) {
+                let year = fecha.getFullYear();
+                let month = ('0' + (fecha.getMonth() + 1)).slice(-2);
+                let day = ('0' + fecha.getDate()).slice(-2);
+                return `${year}-${month}-${day}`;
+            }
+    
+            // Iterar hasta el fin del año en intervalos de 7 días, agregando al selector
+            while (fechaActual.getFullYear() === anio) {
+                const option = document.createElement('option');
+                option.value = formatearFecha(fechaActual);
+                option.textContent = fechaActual.toLocaleDateString();
+                selectSemana.appendChild(option);
+    
+                fechaActual.setDate(fechaActual.getDate() + 7);
+            }
+        }
+    </script>
+
     <h1 class="text-center mt-2">Hacer reserva</h1>
     <div class="mt-5">
         <div class="bg-primary p-2 text-white">
-            <label for="">Salas</label>
-            <select name="Salas" id="">
-                {% for sala in salas %}
-                    <option value="">{{sala}}</option>
-                {% endfor %}
-            </select>
-            
+            <form method="get" action="">
+                <label for="salas">Salas</label>
+                <select name="sala" id="salas" onchange="this.form.submit()">
+                    <option value="">Seleccionar sala</option> <!-- Opción por defecto -->
+                    {% for sala in salas %}
+                        <option value="{{ sala }}" {% if sala == sala_seleccionada %}selected{% endif %}>{{ sala }}</option>
+                    {% endfor %}
+                </select>
+            </form>
         </div>
-        <div class="mt-2 bg-white">
-            <div class="d-flex justify-content-around h5 p-1">
-                <div style="width:20%;" class="text-center">Hora</div>
-                <div style="width:16%;" class="text-center">Lunes</div>
-                <div style="width:16%;" class="text-center">Martes</div>
-                <div style="width:16%;" class="text-center">Miercoles</div>
-                <div style="width:16%;" class="text-center">Jueves</div>
-                <div style="width:16%;" class="text-center">Viernes</div>
+
+        {% if sala_seleccionada %}  <!-- Mostrar la tabla solo si hay una sala seleccionada -->
+            <table class="table table-dark table-sm table-bordered mt-4" id="horario">
+                <thead>
+                    <tr>
+                        <th>Hora</th>
+                        <th>Lunes</th>
+                        <th>Martes</th>
+                        <th>Miércoles</th>
+                        <th>Jueves</th>
+                        <th>Viernes</th>
+                        <th>Sábado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bloque in bloques_horarios %}
+                        <tr>
+                            <td>{{ bloque.hora_inicio }} - {{ bloque.hora_fin }}</td>
+                            {% for dia in dias_semana %}
+                                {% get_nested_item ocupacion_por_bloque dia bloque.hora_inicio as estado %}
+                                <td class="text-center align-middle" style="background-color: {% if estado.estado == 'Ocupado' %}red{% else %}white{% endif %}; color: white;">
+                                    {% if estado.estado == "Libre" %}
+                                        <button type="button" class="btn btn-outline-success" onclick="abrirModal('{{ sala_seleccionada }}', '{{ estado.fecha }}', '{{ bloque.hora_inicio }}', '{{ bloque.hora_fin }}')">Pedir sala</button>
+                                    {% else %}
+                                        {{ estado.estado }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+        <div class="modal fade" id="reservaModal" tabindex="-1" aria-labelledby="reservaModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reservaModalLabel">Pedir Sala</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="reservaForm" method="post" action="{% url 'Ver Reservas' %}">
+                            {% csrf_token %}
+                            
+                            <input type="hidden" name="recursos" id="modalRecursos">
+                            <input type="hidden" name="fecha_inicio" id="modalFechaInicio">
+                            
+                            <div class="mb-3">
+                                <label for="horaInicio" class="form-label">Hora de Inicio</label>
+                                <input type="text" class="form-control" id="modalHoraInicio" name="hora_inicio" readonly>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="horaFin" class="form-label">Hora de Finalización</label>
+                                <input type="time" class="form-control" id="modalHoraFin" name="hora_fin" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="semana" id="labelDiaSemana" class="form-label">Selecciona un Día de la Semana</label>
+                                <select class="form-control" id="modalSemana" name="semana" required>
+                                    <!-- Las opciones de fechas se llenarán automáticamente mediante JavaScript -->
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Confirmar Reserva</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="mt-1 bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class="p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">08:01 - 08:40</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">08:41 - 09:20</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">09:31 - 10:10 </div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">10:11 - 10:50</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">11:01 - 11:40</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">11:41 - 12:20</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">12:31 - 13:10</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">13:11 - 13:50</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">14:01 - 14:40</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">14:41 - 15:20</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">15:31 - 16:10</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">16:11 - 16:50</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">17:01 - 17:40</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">17:41 - 18:20</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">18:21 - 19:00</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">19:11 - 19:50</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">19:51 - 20:30</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">20:41 - 21:20</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">21:21 - 22:00</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">22:11 - 22:50</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-
-        <div class="bg-white " >
-            <div class="d-flex  align-items-center" >
-                <div class=" p-1 text-center align-items-center d-flex justify-content-center" style="border: 1px solid gray;height: 2rem;width:20%;">22:51 - 23:30</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Lunes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Martes</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Miercoles</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Jueves</div>
-                <div class="p-1 text-white" style="border: 1px solid gray;height: 2rem;width:16%;">Viernes</div>
-            </div>
-
-        </div>
-
-        <div class="d-flex justify-content-center">
-            <button class="btn btn-primary mt-5 ">Realizar Reserva</button>
-        </div>
-        
-
     </div>
-    {% endblock %}
+{% endblock %}

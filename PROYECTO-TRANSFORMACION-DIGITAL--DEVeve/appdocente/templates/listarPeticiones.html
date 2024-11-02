@@ -18,15 +18,24 @@ Peticiones Pendientes
         <h1 class="text-3xl font-bold text-gray-800">Peticiones</h1>
     </div>
 
-    <div>
-        <label >Filtra por ID</label>
-
-        <form method="get" action="{% url 'Listar Peticiones' %}" class="d-flex">
-            <input type="text" name="correo" value="{{ correo }}" placeholder="Filtrar por correo..." class="form-control mb-2">
-            <button type="submit" class="btn btn-primary">Buscar</button>
-        </form>
-        
+    {% if messages %}
+    <div class="mt-3">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
     </div>
+    {% endif %}
+
+        <form method="get" action="{% url 'Listar Peticiones' %}" class="row g-2 align-items-center">
+            <div class="col-auto">
+                <input type="text" name="correo" value="{{ correo }}" placeholder="Filtrar por correo..." class="form-control" style="min-width: 250px;">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+        </form>
     <!-- <div class="busqueda">
         <h1>Buscar</h1>
         <input type="text" id="buscar">
@@ -55,26 +64,59 @@ Peticiones Pendientes
         
     </table>-->
 
-    {% for reserva in reservas %}
-    <div class="d-flex mt-2 "> 
-        <h5>{{reserva.docente}}</h5>
-        <h5 class="me-5">{{reserva.sala}}</h5>
-        <h5 class="me-5">{{reserva.asignatura}}</h5>
-        <h5 class="me-5">{{reserva.fecha}}</h5>
-        <h5 class="me-5">{{reserva.horaInicio}}</h5>
-        <h5 class="me-5">{{reserva.horaFin}}</h5>
-        {% if reserva.estado == 'pendiente' %}
-            <h5 class="text-warning">PENDIENTE</h5>
-        {% endif%}
-        {% if reserva.estado == 'aprobado' %}
-            <h5 class="text-success">APROBADO</h5>
-        {% endif%}
-        {% if reserva.estado == 'rechazado' %}
-            <h5 class="text-danger">RECHAZADO</h5>
-        {% endif%}
-        <button class="btn-success btn">Aprobar</button>
-        <button class="btn-danger btn">Rechazar</button>
-    </div>
-{% endfor %}
+    <table class="table table-bordered table-dark table-sm mt-5">
+        <thead>
+            <tr>
+                <th>Docente</th>
+                <th>Email</th>
+                <th>Recursos</th>
+                <th>Tipo de Recurso</th>
+                <th>Fecha</th>
+                <th>Hora Inicio</th>
+                <th>Hora Final</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reserva in reservas %}
+                <tr>
+                    <td>{{ reserva.docente }}</td>
+                    <td>{{ reserva.email }}</td>
+                    <td>{{ reserva.recursos }}</td>
+                    <td>{{ reserva.tipo_recurso }}</td>
+                    <td>{{ reserva.fecha_inicio }}</td>
+                    <td>{{ reserva.hora_inicio }}</td>
+                    <td>{{ reserva.hora_final }}</td>
+                    <td>
+                        {% if reserva.estado == 0 %}
+                            <span class="text-warning fw-bold">PENDIENTE</span>
+                        {% elif reserva.estado == 1 %}
+                            <span class="text-success fw-bold">APROBADO</span>
+                        {% elif reserva.estado == 2 %}
+                            <span class="text-danger fw-bold">RECHAZADO</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <!-- Botón Aprobar -->
+                        <form method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="reserva_id" value="{{ reserva.id }}">
+                            <input type="hidden" name="accion" value="aprobar">
+                            <button type="submit" class="btn btn-success">Aprobar</button>
+                        </form>
+                        
+                        <!-- Botón Rechazar -->
+                        <form method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="reserva_id" value="{{ reserva.id }}">
+                            <input type="hidden" name="accion" value="rechazar">
+                            <button type="submit" class="btn btn-danger">Rechazar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
