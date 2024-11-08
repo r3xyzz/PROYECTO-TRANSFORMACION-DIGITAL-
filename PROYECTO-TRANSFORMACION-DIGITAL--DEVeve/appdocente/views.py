@@ -66,7 +66,7 @@ def listarPeticiones(request):
 
             if conflicto:
                 
-                messages.info(request, "Conflicto de horario: Ya existe una reserva aprobada en este rango de tiempo.")
+                messages.error(request, "Conflicto de horario: Ya existe una reserva aprobada en este rango de tiempo.")
             else:
                 reserva.estado = 1 #con 1 queda reservado
                 reserva.save()

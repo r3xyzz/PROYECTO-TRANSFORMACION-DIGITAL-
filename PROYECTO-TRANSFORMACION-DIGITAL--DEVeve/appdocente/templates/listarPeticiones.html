@@ -19,14 +19,18 @@ Peticiones Pendientes
     </div>
 
     {% if messages %}
-    <div class="mt-3">
-        {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-    {% endif %}
+    {% for message in messages %}
+        <div 
+            class="alert 
+                   {% if message.tags == 'error' %}alert-danger
+                   {% elif message.tags == 'success' %}alert-success
+                   {% elif message.tags == 'info' %}alert-info
+                   {% elif message.tags == 'warning' %}alert-warning
+                   {% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
 
         <form method="get" action="{% url 'Listar Peticiones' %}" class="row g-2 align-items-center">
             <div class="col-auto">
