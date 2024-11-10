@@ -68,7 +68,7 @@ class Reserva2(models.Model):
     estado = models.IntegerField(db_column="ESTADO")
 
     def __str__(self):
-        return f"{self.estado} - {self.recurso} - {self.tipo_recurso} - {self.fecha_inicio} - {self.fecha_inicio} {self.hora_inicio} a {self.hora_fin}"
+        return f"{self.estado} - {self.recurso} - {self.tipo_recurso} - {self.fecha_inicio} - {self.fecha_inicio} - {self.hora_inicio} - {self.hora_fin}"
     
 class Reserva(models.Model):
     id_usuario = models.ForeignKey(Usuario,on_delete=models.CASCADE)
