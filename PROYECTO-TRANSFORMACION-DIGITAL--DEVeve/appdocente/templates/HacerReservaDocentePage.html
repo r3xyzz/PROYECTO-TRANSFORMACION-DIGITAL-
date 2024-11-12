@@ -15,9 +15,9 @@
     </style>
 
     <script>
-        function abrirModal(recurso, fechaInicio, horaInicio, horaFin) {
+        function abrirModal(sala, fechaInicio, horaInicio, horaFin) {
             // Asigna los valores al modal
-            document.getElementById('modalRecursos').value = recurso;
+            document.getElementById('modalSala').value = sala;
             document.getElementById('modalFechaInicio').value = fechaInicio;
             document.getElementById('modalHoraInicio').value = horaInicio;
             document.getElementById('modalHoraFin').value = horaFin;
@@ -102,12 +102,12 @@
                 <tbody>
                     {% for bloque in bloques_horarios %}
                         <tr>
-                            <td>{{ bloque.hora_inicio }} - {{ bloque.hora_fin }}</td>
+                            <td>{{ bloque.hora_inicio }} - {{ bloque.hora_final }}</td>
                             {% for dia in dias_semana %}
                                 {% get_nested_item ocupacion_por_bloque dia bloque.hora_inicio as estado %}
                                 <td class="text-center align-middle" style="background-color: {% if estado.estado == 'Ocupado' %}red{% else %}white{% endif %}; color: white;">
                                     {% if estado.estado == "Libre" %}
-                                        <button type="button" class="btn btn-outline-success" onclick="abrirModal('{{ sala_seleccionada }}', '{{ estado.fecha }}', '{{ bloque.hora_inicio }}', '{{ bloque.hora_fin }}')">Pedir sala</button>
+                                        <button type="button" class="btn btn-outline-success" onclick="abrirModal('{{ sala_seleccionada }}', '{{ estado.fecha }}', '{{ bloque.hora_inicio }}', '{{ bloque.hora_final }}')">Pedir sala</button>
                                     {% else %}
                                         {{ estado.estado }}
                                     {% endif %}
@@ -130,7 +130,7 @@
                         <form id="reservaForm" method="post" action="{% url 'Ver Reservas' %}">
                             {% csrf_token %}
                             
-                            <input type="hidden" name="recursos" id="modalRecursos">
+                            <input type="hidden" name="sala" id="modalSala">
                             <input type="hidden" name="fecha_inicio" id="modalFechaInicio">
                             
                             <div class="mb-3">
@@ -140,7 +140,7 @@
                             
                             <div class="mb-3">
                                 <label for="horaFin" class="form-label">Hora de Finalización</label>
-                                <input type="time" class="form-control" id="modalHoraFin" name="hora_fin" required>
+                                <input type="time" class="form-control" id="modalHoraFin" name="hora_final" required>
                             </div>
                             
                             <div class="mb-3">

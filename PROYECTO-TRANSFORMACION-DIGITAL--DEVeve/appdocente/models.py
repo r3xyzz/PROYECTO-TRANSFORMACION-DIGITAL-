@@ -8,80 +8,19 @@ class Cargo(models.Model):
     def __srt__(self):
         return self.nombre_cargo
 
-class Usuario(models.Model):
-    pnombre = models.CharField(max_length=40)
-    snombre = models.CharField(max_length=40)
-    appaterno = models.CharField(max_length=40)
-    apmaterno = models.CharField(max_length=40)
-    correo = models.CharField(max_length=60)
-    password = models.CharField(max_length=20)
-    id_cargo = models.ForeignKey(Cargo,on_delete=models.CASCADE)
-
-    # def __str__(self):
-    #     return f'{self.pnombre} {self.snombre} {self.appaterno} {self.apmaterno}'
-    
-class Sede(models.Model):
-    nombre_sede = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.nombre_sede
-
-
-class Categoria(models.Model):
-    categoria = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.categoria
-    
-class TipoRecinto(models.Model):
-    tipo_recinto = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.tipo_recinto
-
-class Recinto(models.Model):
-    nombre_recinto = models.CharField(max_length=100)
-    capacidad = models.PositiveIntegerField()
-    id_sede = models.ForeignKey(Sede,on_delete=models.CASCADE)
-    id_categoria = models.ForeignKey(Categoria,on_delete=models.CASCADE)
-    id_tipo = models.ForeignKey(TipoRecinto,on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.nombre_recinto
-    
-class Asignatura(models.Model):
-    nombre = models.CharField(max_length=150)
-    seccion = models.CharField(max_length=30)
-
-    def __str__(self):
-        return f'{self.nombre} - {self.seccion}'
-    
 class Reserva2(models.Model):
     id = models.AutoField(primary_key=True, db_column='ID')
-    recursos = models.CharField(max_length=100, db_column="RECURSOS")
-    tipo_recurso = models.CharField(max_length=100, db_column="TIPO_RECURSO")
+    sala = models.CharField(max_length=100, db_column="SALA")
     fecha_inicio = models.DateField(db_column="FECHA_INICIO")
     fecha_final = models.DateField(db_column="FECHA_FINAL")
     hora_inicio = models.TimeField(db_column="HORA_INICIO")
-    hora_fin = models.TimeField(db_column="HORA_FINAL")
+    hora_final = models.TimeField(db_column="HORA_FINAL")
     correo = models.CharField(max_length=100, db_column="CORREO")
     estado = models.IntegerField(db_column="ESTADO")
 
     def __str__(self):
         return f"{self.estado} - {self.recurso} - {self.tipo_recurso} - {self.fecha_inicio} - {self.fecha_inicio} - {self.hora_inicio} - {self.hora_fin}"
     
-class Reserva(models.Model):
-    id_usuario = models.ForeignKey(Usuario,on_delete=models.CASCADE)
-    id_recinto = models.ForeignKey(Recinto,on_delete=models.CASCADE)
-    id_asignatura = models.ForeignKey(Asignatura,on_delete=models.CASCADE)
-    fecha = models.DateField()
-    hra_inicio = models.CharField(max_length=10)
-    hra_fin = models.CharField(max_length=10)
-    estado = models.CharField(max_length=30) 
-    
-    def __str__(self):
-        return f'Reserva de {self.id_usuario} en {self.id_recinto} para {self.id_asignatura}'
-
 
 class ReporteFrecuencias(models.Model):
     id = models.AutoField(primary_key=True, db_column='ID')
@@ -107,14 +46,24 @@ class ReporteFrecuencias(models.Model):
     
     class Meta:
         db_table = 'reporte_frecuencias'
-        
- 
-class CSVFile(models.Model):
-    nombre = models.CharField(max_length=100)
-    archivo = models.FileField(upload_to='csvs/')
-    subido_el = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.nombre
+    
+    
+class Recintos(models.Model):
+    id = models.AutoField(primary_key=True, db_column='ID')
+    tipo_recurso = models.CharField(max_length=100, db_column='tipo_recurso')
+    sala = models.CharField(max_length=100, db_column='sala')
+    nombre_recinto = models.CharField(max_length=100, db_column='nombre_recinto')
+    capacidad = models.IntegerField(db_column='capacidad')
+    fecha_inicio = models.DateField(db_column='fecha_inicio')
+    fecha_final = models.DateField(db_column='fecha_final')
+    hora_inicio = models.TimeField( db_column='hora_inicio')
+    hora_final = models.TimeField(db_column='hora_final')
+    cantidad_modulos = models.IntegerField(db_column='cantidad_modulos')
+    denominacion_evento = models.CharField(max_length=100, db_column='denominacion_evento')
+    id_evento = models.IntegerField(db_column='id_evento')
+    id_recurso = models.IntegerField(db_column='id_recurso')
+    
+    class Meta:
+        db_table = 'recintos'
 
 

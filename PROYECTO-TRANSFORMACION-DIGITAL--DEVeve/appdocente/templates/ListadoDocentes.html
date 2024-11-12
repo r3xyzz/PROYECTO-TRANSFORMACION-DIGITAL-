@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% load bootstrap_icons %}
+
+<div>
+  <button type="button" class="btn bg-dark">
+    <i class="bi bi-cart-fill text-white h3 m-5" data-bs-toggle="modal" data-bs-target="#exampleModal"></i>
+  </button>
+</div>
+
+{% block content %}
+<div class="d-flex justify-content-between">
+  <h1>Listado de docentes</h1>
+  
+</div>
+<!-- Listado de docentes -->
+
+<table class="table table-bordered table-striped table-hover rounded bg-white mt-3">
+  <thead>
+      <tr>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Acciones</th>
+      </tr>
+  </thead>
+  <tbody>
+      {% for user in usuarios %}
+      <tr>
+          <td>{{ user.nombre }}</td>
+          <td>{{ user.correo }}</td>
+          <td>
+
+                   <!-- Formulario para ver las reservas del docente -->
+          <form action="{% url 'Listar Peticiones' %}" method="GET" style="display:inline;">
+            <input type="hidden" name="correo" value="{{ user.correo }}">
+            <button type="submit" class="btn btn-success btn-sm">Ver Reservas</button>
+        </form>
+
+            <form method="POST" action="{% url 'listado_docentes' %}" style="display:inline;">
+              {% csrf_token %}
+              <input type="hidden" name="docente_id" value="{{ user.id }}">
+              <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+          </form>
+      
+          </td>
+      </tr>
+      {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

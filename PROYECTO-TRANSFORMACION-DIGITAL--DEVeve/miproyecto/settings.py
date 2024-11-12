@@ -47,7 +47,12 @@ INSTALLED_APPS = [
     'bootstrap5',
     'django_bootstrap_icons',
     'bootstrap_datepicker_plus',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

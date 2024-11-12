@@ -1,7 +1,6 @@
 from bootstrap_datepicker_plus.widgets import DatePickerInput
 from django import forms
 # from .models import Sala,Reserva                              SE COMENTA POR NUEVA BD
-from .models import CSVFile
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import AuthenticationForm
@@ -31,19 +30,5 @@ class LoginForm(AuthenticationForm):
         self.cleaned_data['user'] = user
         return self.cleaned_data
 
-class CSVForm(forms.ModelForm):
-    class Meta:
-        model = CSVFile
-        fields = ['nombre', 'archivo']
-
-    def clean_archivo(self):
-        archivo = self.cleaned_data.get('archivo')
-        if not archivo.name.endswith('.csv'):
-            raise forms.ValidationError('Solo se permiten archivos CSV.')
-        return archivo
-
-class SalaForm(forms.ModelForm):
-    ''
-    # class Meta:
-    #     model = Sala                                          SE COMENTA POR NUEVA BD
-    #     fields = ['nombre', 'tipo', 'capacidad']
+class recintosForm(forms.Form):
+    archivo_csv = forms.FileField(label='Seleccione un archivo CSV')
