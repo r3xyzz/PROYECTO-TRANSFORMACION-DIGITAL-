@@ -13,46 +13,39 @@
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            <div id="menu" class="col-2 font-menu">
-                <a href="/bienvenida/"><img src="{% static 'images/logo-duoc.svg' %}" alt="logo" class="logo-duoc"
-                    style="width: 200px; height: auto;"></a>
-                <hr>
 
-                <ul style="list-style: none">
+<body>
+    <div class="container-fluid" style="height: 100vh;">
+        <div class="row" style="height: 100%;">
+            <!-- Columna izquierda (menu) -->
+            <div id="menu" class="col-12 col-md-2 font-menu" style="position: relative; height: 100%; padding-top: 20px;">
+                <a href="/bienvenida/"><img src="{% static 'images/logo-duoc.svg' %}" alt="logo" class="logo-duoc" style="width: 200px; height: auto;"></a>
+                <hr>
+                <ul style="list-style: none;">
+                    <a type="button" class="btn btn-warning" id="emailButton">{{ request.user.email }}</a>
                     {% if grupo_encargado %}
-                        <li><a href="/listar_peticiones/" class="btn-menu" style="font-size: 25px;">Solicitudes</a></li>
-                        <li><a href="/cargar_archivos/" class="btn-menu" style="font-size: 25px;">Subir Calendario</a></li>
-                        <li><a href="/listadoDocentes/" class="btn-menu" style="font-size: 25px;">Docentes</a></li>
+                        <li><a href="/reservas/" class="btn-menu" style="font-size: 25px;">Solicitudes</a></li>
+                        <li><a href="/subir_archivo/" class="btn-menu" style="font-size: 25px;">Subir Calendario</a></li>
+                        <li><a href="/docentes/" class="btn-menu" style="font-size: 25px;">Docentes</a></li>
                     {% elif grupo_docente %}
-                        <li><a href="/hacerReserva/" class="btn-menu" style="font-size: 25px;">Reservar</a></li>
-                        <li><a href="/verReservas/" class="btn-menu" style="font-size: 25px;">Mis Reservas</a></li>
+                        <li><a href="/reservar/" class="btn-menu" style="font-size: 25px;">Reservar</a></li>
+                        <li><a href="/mis_reservas/" class="btn-menu" style="font-size: 25px;">Mis Reservas</a></li>
                     {% endif %}
                     <li class="mt-5"><a href="/logout/" class="btn-menu" style="font-size: 25px;">Cerrar sesión</a></li>
                 </ul>
             </div>
             
-            <main class="col-10 container-fluid main-content">
-                <div class="d-flex justify-content-end">
-                    {% if request.user.is_authenticated %}
-                        <!--<img src="{% static 'images/user_icon.png' %}" alt="User Icon" class="user-icon">-->
-                        <div class="user-info">
-                            <span class="user-email">{{ request.user.email }}</span>
-                        </div>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="btn-login">Iniciar sesión</a>
-                    {% endif %}
-                </div>
-                
+            <!-- Columna derecha (contenido principal) -->
+            <main class="col-12 col-md-10 container-fluid main-content" style="overflow-y: auto; height: 100%; padding-top: 20px;">
                 {% block content %}
                 {% endblock %}
             </main>
         </div>
     </div>
+    
     
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 </body>

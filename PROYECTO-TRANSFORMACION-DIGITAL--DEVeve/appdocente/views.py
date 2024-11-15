@@ -19,6 +19,8 @@ from .decorators import group_required
 from django.core.paginator import Paginator
 import chardet
 from django.db import connection
+from django.db.models import Q
+from django.http import HttpResponseRedirect
 
 
 
@@ -31,7 +33,7 @@ def landing(request):
 def bienvenida(request):
     return render(request, 'bienvenida.html')
 
-def cargarArchivo(request):
+def subir_archivo(request):
 
     if request.method == "POST":
         
@@ -76,13 +78,13 @@ def cargarArchivo(request):
                 registros_insertados += 1
                 
             messages.success(request, f'Datos cargados con éxito. Se han registrado {registros_insertados} filas.')
-            return redirect('Cargar Archivos')  # Cambia si es necesario
+            return redirect('subir_archivo')  # Cambia si es necesario
         
     else:
         print('Método NO es POST')  # Mensaje en caso de que el método no sea POST
         form = recintosForm()
     
-    return render(request, 'cargarArchivos.html', {'form': form})
+    return render(request, 'subir_archivo.html', {'form': form})
 
 
 def no_autorizado(request):
@@ -90,7 +92,7 @@ def no_autorizado(request):
 
 @login_required
 @group_required('encargado')
-def listarPeticiones(request):
+def reservas(request):
     correo2 = request.GET.get('correo', '')  # Obtiene el correo desde la URL (parámetro GET)
     
     # Si es una solicitud POST, actualizar el estado de la reserva
@@ -125,7 +127,7 @@ def listarPeticiones(request):
             reserva.save()
             messages.success(request, "Reserva rechazada con éxito.")
         
-        return redirect('Listar Peticiones')
+        return redirect('reservas')
     
     reservasUsuario = []
 
@@ -151,7 +153,8 @@ def listarPeticiones(request):
             'fecha_inicio': res.fecha_inicio,
             'hora_inicio': res.hora_inicio,
             'hora_final': res.hora_final,
-            'estado': res.estado
+            'estado': res.estado,
+            'comentario': res.comentario
         })
     
     context = {
@@ -160,7 +163,7 @@ def listarPeticiones(request):
         "page_obj": page_obj,  # Pasa el objeto de la página actual al template
     }
     
-    return render(request, 'listarPeticiones.html', context)
+    return render(request, 'reservas.html', context)
 
 
 def obtener_datos(request):
@@ -292,7 +295,7 @@ def logout_view(request):
 
 #apartado admin
 
-def listadoDocentes(request):
+def docentes(request):
     if request.method == 'POST':
         docente_id = request.POST.get('docente_id')
         print(f"docente_id recibido: {docente_id}")  # Verifica si se recibe el ID
@@ -301,7 +304,7 @@ def listadoDocentes(request):
             try:
                 docente = User.objects.get(id=docente_id)
                 docente.delete()  # Elimina al docente
-                return redirect('listado_docentes')  # Redirige después de eliminar al docente
+                return redirect('docentes')  # Redirige después de eliminar al docente
             except User.DoesNotExist:
                 pass  # Si no se encuentra el docente no hace nada
 
@@ -316,7 +319,7 @@ def listadoDocentes(request):
             })
 
     context = {"usuarios": docentes}
-    return render(request, 'ListadoDocentes.html', context)
+    return render(request, 'docentes.html', context)
 
 
 # apartado docente 
@@ -326,8 +329,49 @@ def homeDocentes(request):
 
 @login_required
 @group_required('docente')
-def hacerReserva(request):
+def reservar(request):
     
+    email = request.user.email
+    
+    if request.method == 'GET':
+        cap = request.GET.get('capacidad')
+        sala = request.GET.get('sala')
+        fecha = request.GET.get('semana')
+        hora_inicio = request.GET.get('hora_inicio')
+        hora_final = request.GET.get('hora_final')
+        comentario = request.GET.get('comentario')
+
+        # Si los parámetros están presentes en la URL, se procede con la validación
+        if sala and fecha and hora_inicio and hora_final:
+            conflictos = Recintos.objects.filter(
+                sala=sala,
+                fecha_inicio=fecha,  # Suponiendo que "fecha_inicio" almacena la fecha completa
+            ).filter(
+                # Superposición de horarios
+                Q(hora_inicio__lte=hora_final) & Q(hora_final__gt=hora_inicio)
+            )
+
+            if conflictos.exists():
+                # Hay al menos un conflicto
+                messages.error(request, "El horario seleccionado ya está ocupado.")
+            else:
+                # No hay conflictos, puedes proceder
+                messages.success(request, "Horario disponible. Reserva confirmada.")
+
+                # Crear el nuevo registro de reserva
+                Reserva2.objects.create(
+                    sala=sala,
+                    fecha_inicio=datetime.strptime(fecha, '%Y-%m-%d').date(),
+                    fecha_final=datetime.strptime(fecha, '%Y-%m-%d').date(),
+                    hora_inicio=datetime.strptime(hora_inicio, '%H:%M').time(),
+                    hora_final=datetime.strptime(hora_final, '%H:%M').time(),
+                    correo=email,
+                    estado=0,
+                    comentario=comentario
+                )
+                
+            return HttpResponseRedirect(reverse('reservar') + f'?sala={sala}&capacidad={cap}')
+
     hoy = datetime.today()
 
     #calcular semana
@@ -358,10 +402,30 @@ def hacerReserva(request):
         {"hora_inicio": "22:11", "hora_final": "22:50"},
         {"hora_inicio": "22:51", "hora_final": "23:30"}
     ]
+    
+    #capacidades
+    capacidades = Recintos.objects.values_list('capacidad', flat=True).distinct().order_by('capacidad')
 
-    #obtener salas
-    salasTotales = Recintos.objects.values_list('sala', flat=True).distinct()
+    
     sala_seleccionada = request.GET.get('sala')
+    capacidad_seleccionada = request.GET.get('capacidad')
+    
+    if capacidad_seleccionada and capacidad_seleccionada.isdigit():
+        capacidad_seleccionada = int(capacidad_seleccionada)
+
+    filtros = {}
+    filtros2 = {}
+    if capacidad_seleccionada is not None:
+        try:
+            capacidad_seleccionada = int(capacidad_seleccionada)  # Intentamos convertir a entero
+            filtros['capacidad'] = capacidad_seleccionada
+            filtros2['capacidad'] = capacidad_seleccionada
+        except ValueError:
+            # Si la conversión falla, puedes manejarlo con un mensaje de error o simplemente no aplicar el filtro
+            pass
+
+# Obtener salas con el filtro de capacidad solo si es válido
+    salasTotales = Recintos.objects.filter(**filtros).values_list('sala', flat=True).distinct()
 
     # Crear una lista de fechas para la semana actual (Lunes a Sábado)
     dias_semana = [(inicio_semana + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(6)]
@@ -371,14 +435,19 @@ def hacerReserva(request):
     for dia in dias_semana:
         ocupacion_por_bloque[dia] = {}
         for bloque in bloques_horarios:
-            ocupacion_por_bloque[dia][bloque["hora_inicio"]] = {"estado": "Libre", "fecha": dia}
+            ocupacion_por_bloque[dia][bloque["hora_inicio"]] = {"estado": "Libre", "fecha": dia}    
+
 
     if sala_seleccionada:
+        
+        filtros2['sala'] = sala_seleccionada
+        filtros2['fecha_inicio__gte'] = inicio_semana
+        filtros2['fecha_inicio__lte'] = fin_semana
+        
+        
         # Filtrar las clases de la sala seleccionada para la semana actual
         clases = Recintos.objects.filter(
-            sala=sala_seleccionada,
-            fecha_inicio__gte=inicio_semana,
-            fecha_inicio__lte=fin_semana
+            **filtros2
         )
 
         # Actualizar la ocupación de los bloques de acuerdo a las clases encontradas
@@ -400,22 +469,50 @@ def hacerReserva(request):
                        (bloque_inicio <= hora_inicio_clase and bloque_fin >= hora_final_clase):
                         ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["estado"] = "Ocupado"
                         ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["fecha"] = dia_semana
+                        ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["descripcion"] = clase.denominacion_evento
+                        
+                        print(f"Descripción asignada a {dia_semana} {bloque['hora_inicio']}: {clase.denominacion_evento}")  # Depuración
+                        
+        reservas = Reserva2.objects.filter(sala=sala_seleccionada, fecha_inicio__gte=inicio_semana, fecha_inicio__lte=fin_semana, estado=1)
+
+        # Actualizar la ocupación con las reservas
+        for reserva in reservas:
+            dia_semana = reserva.fecha_inicio.strftime('%Y-%m-%d')
+            hora_inicio_reserva = reserva.hora_inicio
+            hora_final_reserva = reserva.hora_final
+
+            # Verificar si el día está en dias_semana
+            if dia_semana in dias_semana:
+                # Marcar los bloques reservados
+                for bloque in bloques_horarios:
+                    bloque_inicio = datetime.strptime(bloque["hora_inicio"], "%H:%M").time()
+                    bloque_fin = datetime.strptime(bloque["hora_final"], "%H:%M").time()
+
+                    # Verificar si el bloque está dentro del rango de la reserva
+                    if (bloque_inicio >= hora_inicio_reserva and bloque_inicio < hora_final_reserva) or \
+                    (bloque_fin > hora_inicio_reserva and bloque_fin <= hora_final_reserva) or \
+                    (bloque_inicio <= hora_inicio_reserva and bloque_fin >= hora_final_reserva):
+                        ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["estado"] = "Reservado"
+                        ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["fecha"] = dia_semana
+                        ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["descripcion"] = reserva.comentario
 
     context = {
         "salas": salasTotales,
         "sala_seleccionada": sala_seleccionada,
+        "capacidad_seleccionada": capacidad_seleccionada,
         "bloques_horarios": bloques_horarios,
         "ocupacion_por_bloque": ocupacion_por_bloque,
         "dias_semana": dias_semana, 
+        "capacidades": capacidades
     }
 
 
-    return render(request, 'HacerReservaDocentePage.html', context)
+    return render(request, 'reservar.html', context)
 
 
 @login_required
 @group_required('docente')
-def verReservas(request):
+def mis_reservas(request):
     email = request.user.email
 
     # Esto solo se ejecuta si se quiere reservar
@@ -441,7 +538,7 @@ def verReservas(request):
         )
 
         # Redirigir para que el código de abajo no trabaje
-        return redirect('Ver Reservas')
+        return redirect('mis_reservas')
 
     # Si no se registra nada, cargará esto
     reservasUsuario = []
@@ -461,7 +558,8 @@ def verReservas(request):
             'fecha_inicio': res.fecha_inicio,
             'hora_inicio': res.hora_inicio,
             'hora_final': res.hora_final,
-            'estado': res.estado
+            'estado': res.estado,
+            'comentario': res.comentario
         })
 
     context = {
@@ -469,4 +567,4 @@ def verReservas(request):
         "page_obj": page_obj  # Pasa el objeto de la página actual al template
     }
 
-    return render(request, 'VerReservasDocentePage.html', context)
+    return render(request, 'mis_reservas.html', context)

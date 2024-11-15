@@ -15,6 +15,7 @@
     </style>
 
     <script>
+
         function abrirModal(sala, fechaInicio, horaInicio, horaFin) {
             // Asigna los valores al modal
             document.getElementById('modalSala').value = sala;
@@ -73,14 +74,38 @@
     </script>
 
     <h1 class="text-center mt-2">Hacer reserva</h1>
+
+    {% if messages %}
+    <div class="mt-3">
+        {% for message in messages %}
+            <div class="alert {% if 'error' in message.tags %}alert-danger{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+
     <div class="mt-5">
-        <div class="bg-primary p-2 text-white">
+        <div class="bg-primary p-2 text-white d-flex">
             <form method="get" action="">
                 <label for="salas">Salas</label>
                 <select name="sala" id="salas" onchange="this.form.submit()">
-                    <option value="">Seleccionar sala</option> <!-- Opción por defecto -->
+                    <option value="">Seleccionar</option> <!-- Opción por defecto -->
                     {% for sala in salas %}
                         <option value="{{ sala }}" {% if sala == sala_seleccionada %}selected{% endif %}>{{ sala }}</option>
+                    {% endfor %}
+                </select>
+                <!-- Input oculto para mantener el valor de capacidad -->
+                <input type="hidden" name="capacidad" value="{{ capacidad_seleccionada }}">
+            </form>
+            
+            <form method="get" action="">
+                <label style="padding-left: 20px" for="capacidad">Capacidad</label>
+                <select name="capacidad" id="capacidad" onchange="this.form.submit()">
+                    <option value="">Seleccionar</option> <!-- Opción por defecto -->
+                    {% for capacidad in capacidades %}
+                        <option value="{{ capacidad }}" {% if capacidad == capacidad_seleccionada %}selected{% endif %}>{{ capacidad }}</option>
                     {% endfor %}
                 </select>
             </form>
@@ -105,11 +130,11 @@
                             <td>{{ bloque.hora_inicio }} - {{ bloque.hora_final }}</td>
                             {% for dia in dias_semana %}
                                 {% get_nested_item ocupacion_por_bloque dia bloque.hora_inicio as estado %}
-                                <td class="text-center align-middle" style="background-color: {% if estado.estado == 'Ocupado' %}red{% else %}white{% endif %}; color: white;">
+                                <td class="text-center align-middle" style="background-color: {% if estado.estado == 'Ocupado' %}red{% elif estado.estado == 'Reservado' %}orange{% else %}white{% endif %}; color: white;">
                                     {% if estado.estado == "Libre" %}
                                         <button type="button" class="btn btn-outline-success" onclick="abrirModal('{{ sala_seleccionada }}', '{{ estado.fecha }}', '{{ bloque.hora_inicio }}', '{{ bloque.hora_final }}')">Pedir sala</button>
                                     {% else %}
-                                        {{ estado.estado }}
+                                        {% if estado.estado == "Reservado" %}{{estado.estado}}<br>{% endif %}<span title={{ estado.descripcion }}>{{ estado.descripcion|cortar_hasta_guion }}</span>
                                     {% endif %}
                                 </td>
                             {% endfor %}
@@ -127,10 +152,18 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="reservaForm" method="post" action="{% url 'Ver Reservas' %}">
+                        <form id="reservaForm" method="get" action="{% url 'reservar' %}">
+
                             {% csrf_token %}
-                            
-                            <input type="hidden" name="sala" id="modalSala">
+
+                            <input type="hidden" name="capacidad" value="{{ capacidad_seleccionada }}">
+
+                            <div class="mb-3">
+                                <label for="horaInicio" class="form-label">Sala</label>
+                                <input type="text" class="form-control" id="modalSala" name="sala" readonly>
+                            </div>
+
+
                             <input type="hidden" name="fecha_inicio" id="modalFechaInicio">
                             
                             <div class="mb-3">
@@ -148,6 +181,11 @@
                                 <select class="form-control" id="modalSemana" name="semana" required>
                                     <!-- Las opciones de fechas se llenarán automáticamente mediante JavaScript -->
                                 </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="comentario" id="labelComentario" class="form-label">Razón de uso</label>
+                                <input type="text" maxlength="100" class="form-control" id="modalComentario" name="comentario" required>
                             </div>
                             
                             <button type="submit" class="btn btn-primary">Confirmar Reserva</button>

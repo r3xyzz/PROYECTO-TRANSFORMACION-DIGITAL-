@@ -17,6 +17,7 @@ class Reserva2(models.Model):
     hora_final = models.TimeField(db_column="HORA_FINAL")
     correo = models.CharField(max_length=100, db_column="CORREO")
     estado = models.IntegerField(db_column="ESTADO")
+    comentario = models.CharField(max_length=100, db_column="COMENTARIO")
 
     def __str__(self):
         return f"{self.estado} - {self.recurso} - {self.tipo_recurso} - {self.fecha_inicio} - {self.fecha_inicio} - {self.hora_inicio} - {self.hora_fin}"

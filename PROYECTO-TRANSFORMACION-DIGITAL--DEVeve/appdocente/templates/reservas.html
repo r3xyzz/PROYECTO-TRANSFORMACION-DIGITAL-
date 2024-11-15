@@ -27,7 +27,7 @@ Peticiones Pendientes
     {% endif %}
 
     <!-- Formulario de búsqueda -->
-    <form method="get" action="{% url 'Listar Peticiones' %}" class="row g-3 align-items-center mb-4">
+    <form method="get" action="{% url 'reservas' %}" class="row g-3 align-items-center mb-4">
         <div class="col-auto">
             <input type="text" name="correo" value="{{ correo }}" placeholder="Filtrar por correo..." class="form-control" style="min-width: 250px;">
         </div>
@@ -47,6 +47,7 @@ Peticiones Pendientes
                 <th>Fecha</th>
                 <th>Hora Inicio</th>
                 <th>Hora Final</th>
+                <th>Comentario</th>
                 <th>Estado</th>
                 <th>Acciones</th>
             </tr>
@@ -54,7 +55,7 @@ Peticiones Pendientes
         <tbody>
             {% if reservas|length == 0 %}
                 <tr>
-                    <td colspan="9" class="text-center">No hay solicitudes.</td>
+                    <td colspan="10" class="text-center">No hay solicitudes.</td>
                 </tr>
             {% else %}
                 {% for reserva in reservas %}
@@ -66,6 +67,7 @@ Peticiones Pendientes
                         <td>{{ reserva.fecha_inicio }}</td>
                         <td>{{ reserva.hora_inicio }}</td>
                         <td>{{ reserva.hora_final }}</td>
+                        <td title={{ reserva.comentario }}>{{ reserva.comentario|slice:":10" }}{% if reserva.comentario|length > 10 %}...{% endif %}</td>
                         <td>
                             {% if reserva.estado == 0 %}
                                 <span class="text-warning fw-bold">PENDIENTE</span>
@@ -77,15 +79,14 @@ Peticiones Pendientes
                         </td>
                         <td class="d-flex justify-content-between">
                             <!-- Botón Aprobar -->
-                            <form method="post" class="d-inline">
+                            <form method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="reserva_id" value="{{ reserva.id }}">
                                 <input type="hidden" name="accion" value="aprobar">
                                 <button type="submit" class="btn btn-success btn-sm">Aprobar</button>
                             </form>
-        
                             <!-- Botón Rechazar -->
-                            <form method="post" class="d-inline">
+                            <form method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="reserva_id" value="{{ reserva.id }}">
                                 <input type="hidden" name="accion" value="rechazar">
