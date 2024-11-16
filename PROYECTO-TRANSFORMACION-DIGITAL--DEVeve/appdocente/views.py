@@ -21,8 +21,71 @@ import chardet
 from django.db import connection
 from django.db.models import Q
 from django.http import HttpResponseRedirect
+import configparser, os
 
+def obtener_fechas_ini():
+    
+    
+    ruta_archivo = os.path.join(os.path.dirname(__file__), 'config', 'calendario.ini')
 
+    # Crear una instancia de ConfigParser
+    config = configparser.ConfigParser()
+
+    # Verificar si el archivo ya existe y si la sección 'configuracion' existe
+    if not os.path.exists(ruta_archivo):
+        # Si el archivo no existe, crearlo y agregar la sección
+        config.add_section('configuracion')
+        
+    config.read(ruta_archivo)
+    
+    fecha_inicio = config.get('configuracion', 'fecha_inicio')
+    fecha_final = config.get('configuracion', 'fecha_final')
+
+    # Convertir las fechas de 'día/mes/año' a objetos datetime
+    fecha_inicio_dt = datetime.strptime(fecha_inicio, '%d/%m/%Y')
+    fecha_final_dt = datetime.strptime(fecha_final, '%d/%m/%Y')
+
+    return fecha_inicio_dt, fecha_final_dt
+
+def obtener_semanas_restantes():
+    """
+    Obtiene las semanas restantes del año, pero solo dentro del rango de fechas
+    'fecha_inicio' y 'fecha_final' obtenidas desde el archivo INI. Descartando las semanas ya pasadas
+    pero incluyendo la semana actual si hoy está dentro de ella.
+    """
+    # Obtener las fechas de inicio y final desde el archivo INI
+    fecha_inicio, fecha_final = obtener_fechas_ini()
+
+    hoy = datetime.today()
+    fin_ano = datetime(hoy.year, 12, 31)  # 31 de diciembre del año actual
+
+    semanas = []  # Lista para almacenar las semanas
+
+    # Inicia desde el lunes de la semana de 'fecha_inicio' o la fecha de inicio
+    if fecha_inicio.weekday() == 0:  # Lunes
+        inicio_semana = fecha_inicio
+    else:
+        inicio_semana = fecha_inicio - timedelta(days=fecha_inicio.weekday())
+
+    while inicio_semana <= fecha_final:
+        # Calcular el fin de la semana
+        fin_semana = inicio_semana + timedelta(days=6)
+
+        # Incluir la semana si la fecha actual está dentro de ella (o si está en el futuro)
+        if inicio_semana <= hoy <= fin_semana:
+            inicio_formateado = inicio_semana.strftime('%d/%m/%Y')
+            fin_formateado = fin_semana.strftime('%d/%m/%Y')
+            semanas.append(f"{inicio_formateado} - {fin_formateado}")
+        # Si la semana está en el futuro y no ha pasado, agregarla
+        elif inicio_semana > hoy:
+            inicio_formateado = inicio_semana.strftime('%d/%m/%Y')
+            fin_formateado = fin_semana.strftime('%d/%m/%Y')
+            semanas.append(f"{inicio_formateado} - {fin_formateado}")
+
+        # Avanzar a la siguiente semana
+        inicio_semana += timedelta(days=7)
+
+    return semanas
 
 # Ocupar landing al momento de hacer logout
 def landing(request):
@@ -40,6 +103,40 @@ def subir_archivo(request):
         form = recintosForm(request.POST, request.FILES)
         if form.is_valid():
             
+            
+            ruta_archivo = os.path.join(os.path.dirname(__file__), 'config', 'calendario.ini')
+
+            # Crear una instancia de ConfigParser
+            config = configparser.ConfigParser()
+
+            # Verificar si el archivo ya existe y si la sección 'configuracion' existe
+            if not os.path.exists(ruta_archivo):
+                # Si el archivo no existe, crearlo y agregar la sección
+                config.add_section('configuracion')
+
+            # Leer el archivo .ini
+            config.read(ruta_archivo)
+            
+            fecha_inicio = request.POST.get('calendario_fecha_inicio')
+            fecha_final = request.POST.get('calendario_fecha_final')
+
+            # Convertir las fechas a formato 'día/mes/año' (ejemplo: 06/12/2024)
+            fecha_inicio_formateada = datetime.strptime(fecha_inicio, '%Y-%m-%d').strftime('%d/%m/%Y')
+            fecha_final_formateada = datetime.strptime(fecha_final, '%Y-%m-%d').strftime('%d/%m/%Y')
+
+
+            # Actualizar las fechas en la sección 'configuracion'
+            config.set('configuracion', 'fecha_inicio', fecha_inicio_formateada)  # Aquí pasas las fechas desde el formulario
+            config.set('configuracion', 'fecha_final', fecha_final_formateada)
+
+            # Guardar los cambios en el archivo calendario.ini
+            with open(ruta_archivo, 'w') as configfile:
+                config.write(configfile)
+            
+            
+            registros_insertados = 0
+            
+            """"
             with connection.cursor() as cursor:
                 cursor.execute("TRUNCATE TABLE recintos")
         
@@ -48,7 +145,6 @@ def subir_archivo(request):
             decoded_file = archivo_csv.read().decode('utf-8').splitlines()
             reader = csv.reader(decoded_file, delimiter=';')
             
-            registros_insertados = 0
                 
             next(reader) 
             for row in reader:
@@ -76,12 +172,13 @@ def subir_archivo(request):
                 )
                 
                 registros_insertados += 1
+                """
+            
                 
             messages.success(request, f'Datos cargados con éxito. Se han registrado {registros_insertados} filas.')
             return redirect('subir_archivo')  # Cambia si es necesario
         
     else:
-        print('Método NO es POST')  # Mensaje en caso de que el método no sea POST
         form = recintosForm()
     
     return render(request, 'subir_archivo.html', {'form': form})
@@ -334,7 +431,9 @@ def reservar(request):
     email = request.user.email
     
     if request.method == 'GET':
+
         cap = request.GET.get('capacidad')
+        sem_sel = request.GET.get('semana_seleccionada')
         sala = request.GET.get('sala')
         fecha = request.GET.get('semana')
         hora_inicio = request.GET.get('hora_inicio')
@@ -343,6 +442,7 @@ def reservar(request):
 
         # Si los parámetros están presentes en la URL, se procede con la validación
         if sala and fecha and hora_inicio and hora_final:
+            
             conflictos = Recintos.objects.filter(
                 sala=sala,
                 fecha_inicio=fecha,  # Suponiendo que "fecha_inicio" almacena la fecha completa
@@ -356,51 +456,69 @@ def reservar(request):
                 messages.error(request, "El horario seleccionado ya está ocupado.")
             else:
                 # No hay conflictos, puedes proceder
-                messages.success(request, "Horario disponible. Reserva confirmada.")
-
-                # Crear el nuevo registro de reserva
-                Reserva2.objects.create(
-                    sala=sala,
-                    fecha_inicio=datetime.strptime(fecha, '%Y-%m-%d').date(),
-                    fecha_final=datetime.strptime(fecha, '%Y-%m-%d').date(),
-                    hora_inicio=datetime.strptime(hora_inicio, '%H:%M').time(),
-                    hora_final=datetime.strptime(hora_final, '%H:%M').time(),
-                    correo=email,
-                    estado=0,
-                    comentario=comentario
-                )
                 
-            return HttpResponseRedirect(reverse('reservar') + f'?sala={sala}&capacidad={cap}')
+                conflicto = Reserva2.objects.filter(
+                    fecha_inicio=fecha,
+                    estado=1,  # El 1 es las que están aprobadas
+                    sala=sala  # Para revisar solo en la misma sala
+                ).filter(
+                    hora_inicio__lt=hora_final,  # lt significa menor que
+                    hora_final__gt=hora_inicio   # gt significa mayor que
+                ).exists()
+
+                if conflicto:
+                    messages.error(request, "Conflicto de horario: Ya existe una reserva aprobada en este rango de tiempo.")
+                else:
+                    
+                    if Recintos.objects.filter(sala=sala).exists():
+                    
+                        messages.success(request, "Horario disponible. Reserva confirmada.")
+
+                        # Crear el nuevo registro de reserva
+                        Reserva2.objects.create(
+                            sala=sala,
+                            fecha_inicio=datetime.strptime(fecha, '%Y-%m-%d').date(),
+                            fecha_final=datetime.strptime(fecha, '%Y-%m-%d').date(),
+                            hora_inicio=datetime.strptime(hora_inicio, '%H:%M').time(),
+                            hora_final=datetime.strptime(hora_final, '%H:%M').time(),
+                            correo=email,
+                            estado=0,
+                            comentario=comentario
+                        )
+                    else:
+                        messages.error(request, "Error: La sala no existe.")
+                
+            
+                
+            return HttpResponseRedirect(reverse('reservar') + f'?sala={sala}&capacidad={cap}&semana_seleccionada={sem_sel}')
 
     hoy = datetime.today()
-
-    #calcular semana
-    inicio_semana = hoy - timedelta(days=hoy.weekday())  # lunes
-    fin_semana = inicio_semana + timedelta(days=5)  # sabado
+    
+    weeks = obtener_semanas_restantes()
 
     #bloques de horas
     bloques_horarios = [
-        {"hora_inicio": "08:01", "hora_final": "08:40"},
-        {"hora_inicio": "08:41", "hora_final": "09:20"},
-        {"hora_inicio": "09:31", "hora_final": "10:10"},
-        {"hora_inicio": "10:11", "hora_final": "10:50"},
-        {"hora_inicio": "11:01", "hora_final": "11:40"},
-        {"hora_inicio": "11:41", "hora_final": "12:20"},
-        {"hora_inicio": "12:31", "hora_final": "13:10"},
-        {"hora_inicio": "13:11", "hora_final": "13:50"},
-        {"hora_inicio": "14:01", "hora_final": "14:40"},
-        {"hora_inicio": "14:41", "hora_final": "15:20"},
-        {"hora_inicio": "15:31", "hora_final": "16:10"},
-        {"hora_inicio": "16:11", "hora_final": "16:50"},
-        {"hora_inicio": "17:01", "hora_final": "17:40"},
-        {"hora_inicio": "17:41", "hora_final": "18:20"},
-        {"hora_inicio": "18:21", "hora_final": "19:00"},
-        {"hora_inicio": "19:11", "hora_final": "19:50"},
-        {"hora_inicio": "19:51", "hora_final": "20:30"},
-        {"hora_inicio": "20:41", "hora_final": "21:20"},
-        {"hora_inicio": "21:21", "hora_final": "22:00"},
-        {"hora_inicio": "22:11", "hora_final": "22:50"},
-        {"hora_inicio": "22:51", "hora_final": "23:30"}
+        {"hora_inicio": "08:00", "hora_final": "08:40"},
+        {"hora_inicio": "08:40", "hora_final": "09:20"},
+        {"hora_inicio": "09:30", "hora_final": "10:10"},
+        {"hora_inicio": "10:10", "hora_final": "10:50"},
+        {"hora_inicio": "11:00", "hora_final": "11:40"},
+        {"hora_inicio": "11:40", "hora_final": "12:20"},
+        {"hora_inicio": "12:30", "hora_final": "13:10"},
+        {"hora_inicio": "13:10", "hora_final": "13:50"},
+        {"hora_inicio": "14:00", "hora_final": "14:40"},
+        {"hora_inicio": "14:40", "hora_final": "15:20"},
+        {"hora_inicio": "15:30", "hora_final": "16:10"},
+        {"hora_inicio": "16:10", "hora_final": "16:50"},
+        {"hora_inicio": "17:00", "hora_final": "17:40"},
+        {"hora_inicio": "17:40", "hora_final": "18:20"},
+        {"hora_inicio": "18:20", "hora_final": "19:00"},
+        {"hora_inicio": "19:10", "hora_final": "19:50"},
+        {"hora_inicio": "19:50", "hora_final": "20:30"},
+        {"hora_inicio": "20:40", "hora_final": "21:20"},
+        {"hora_inicio": "21:20", "hora_final": "22:00"},
+        {"hora_inicio": "22:10", "hora_final": "22:50"},
+        {"hora_inicio": "22:50", "hora_final": "23:30"}
     ]
     
     #capacidades
@@ -409,6 +527,42 @@ def reservar(request):
     
     sala_seleccionada = request.GET.get('sala')
     capacidad_seleccionada = request.GET.get('capacidad')
+    semana_seleccionada = request.GET.get('semana_seleccionada')
+    
+    #semana_seleccionada = "11/11/2024 - 17/11/2024"
+    
+    #calcular semana
+    #inicio_semana = hoy - timedelta(days=hoy.weekday())  # lunes
+    #fin_semana = inicio_semana + timedelta(days=5)  # sabado
+    
+    
+    try:
+        if semana_seleccionada:
+            # Intentamos convertir la fecha de semana_seleccionada al formato adecuado
+            inicio_semana = datetime.strptime(semana_seleccionada.split(' - ')[0], '%d/%m/%Y')
+            fin_semana = datetime.strptime(semana_seleccionada.split(' - ')[1], '%d/%m/%Y')
+        else:
+
+            raise ValueError("Fecha no proporcionada")
+    except (ValueError, TypeError):
+        # Si ocurre un error, asignamos la semana actual
+        
+        print("aqui formateando")
+        inicio_semana = hoy - timedelta(days=hoy.weekday())  # Lunes de la semana actual
+        fin_semana = inicio_semana + timedelta(days=6)  # Sábado de la semana actual
+        
+        inicio_formateado = inicio_semana.strftime('%d/%m/%Y')
+        fin_formateado = fin_semana.strftime('%d/%m/%Y')
+        
+        semana_seleccionada = f"{inicio_formateado} - {fin_formateado}"
+        
+        print(semana_seleccionada)
+    
+
+    # Ajuste para que fin_semana no cuente el domingo
+    # Si el último día es domingo (domingo = 6), restamos un día
+    if fin_semana.weekday() == 6:  # Domingo
+        fin_semana = fin_semana - timedelta(days=1)
     
     if capacidad_seleccionada and capacidad_seleccionada.isdigit():
         capacidad_seleccionada = int(capacidad_seleccionada)
@@ -440,66 +594,76 @@ def reservar(request):
 
     if sala_seleccionada:
         
-        filtros2['sala'] = sala_seleccionada
-        filtros2['fecha_inicio__gte'] = inicio_semana
-        filtros2['fecha_inicio__lte'] = fin_semana
+        if Recintos.objects.filter(sala=sala).exists():
         
-        
-        # Filtrar las clases de la sala seleccionada para la semana actual
-        clases = Recintos.objects.filter(
-            **filtros2
-        )
+            filtros2['sala'] = sala_seleccionada
+            filtros2['fecha_inicio__gte'] = inicio_semana
+            filtros2['fecha_inicio__lte'] = fin_semana
+            
+            
+            # Filtrar las clases de la sala seleccionada para la semana actual
+            clases = Recintos.objects.filter(
+                **filtros2
+            )
 
-        # Actualizar la ocupación de los bloques de acuerdo a las clases encontradas
-        for clase in clases:
-            dia_semana = clase.fecha_inicio.strftime('%Y-%m-%d')
-            hora_inicio_clase = clase.hora_inicio
-            hora_final_clase = clase.hora_final
+            # Actualizar la ocupación de los bloques de acuerdo a las clases encontradas
+            for clase in clases:
+                dia_semana = clase.fecha_inicio.strftime('%Y-%m-%d')
+                hora_inicio_clase = clase.hora_inicio
+                hora_final_clase = clase.hora_final
 
-            # Verificar si el día está en dias_semana
-            if dia_semana in dias_semana:
-                # Marcar todos los bloques que están en el rango de hora_inicio y hora_fin de la clase
-                for bloque in bloques_horarios:
-                    bloque_inicio = datetime.strptime(bloque["hora_inicio"], "%H:%M").time()
-                    bloque_fin = datetime.strptime(bloque["hora_final"], "%H:%M").time()
+                # Verificar si el día está en dias_semana
+                if dia_semana in dias_semana:
+                    # Marcar todos los bloques que están en el rango de hora_inicio y hora_fin de la clase
+                    for bloque in bloques_horarios:
+                        bloque_inicio = datetime.strptime(bloque["hora_inicio"], "%H:%M").time()
+                        bloque_fin = datetime.strptime(bloque["hora_final"], "%H:%M").time()
 
-                    # Verificar si el bloque está dentro del rango de la clase
-                    if (bloque_inicio >= hora_inicio_clase and bloque_inicio < hora_final_clase) or \
-                       (bloque_fin > hora_inicio_clase and bloque_fin <= hora_final_clase) or \
-                       (bloque_inicio <= hora_inicio_clase and bloque_fin >= hora_final_clase):
-                        ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["estado"] = "Ocupado"
-                        ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["fecha"] = dia_semana
-                        ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["descripcion"] = clase.denominacion_evento
-                        
-                        print(f"Descripción asignada a {dia_semana} {bloque['hora_inicio']}: {clase.denominacion_evento}")  # Depuración
-                        
-        reservas = Reserva2.objects.filter(sala=sala_seleccionada, fecha_inicio__gte=inicio_semana, fecha_inicio__lte=fin_semana, estado=1)
+                        # Verificar si el bloque está dentro del rango de la clase
+                        if (bloque_inicio >= hora_inicio_clase and bloque_inicio < hora_final_clase) or \
+                        (bloque_fin > hora_inicio_clase and bloque_fin <= hora_final_clase) or \
+                        (bloque_inicio <= hora_inicio_clase and bloque_fin >= hora_final_clase):
+                            ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["estado"] = "Ocupado"
+                            ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["fecha"] = dia_semana
+                            ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["descripcion"] = clase.denominacion_evento
+                            print(ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["fecha"])
+                            
+                            #print(f"Descripción asignada a {dia_semana} {bloque['hora_inicio']}: {clase.denominacion_evento}")  # Depuración
+                            
+            reservas = Reserva2.objects.filter(sala=sala_seleccionada, fecha_inicio__gte=inicio_semana, fecha_inicio__lte=fin_semana, estado=1)
 
-        # Actualizar la ocupación con las reservas
-        for reserva in reservas:
-            dia_semana = reserva.fecha_inicio.strftime('%Y-%m-%d')
-            hora_inicio_reserva = reserva.hora_inicio
-            hora_final_reserva = reserva.hora_final
+            # Actualizar la ocupación con las reservas
+            for reserva in reservas:
+                dia_semana = reserva.fecha_inicio.strftime('%Y-%m-%d')
+                hora_inicio_reserva = reserva.hora_inicio
+                hora_final_reserva = reserva.hora_final
 
-            # Verificar si el día está en dias_semana
-            if dia_semana in dias_semana:
-                # Marcar los bloques reservados
-                for bloque in bloques_horarios:
-                    bloque_inicio = datetime.strptime(bloque["hora_inicio"], "%H:%M").time()
-                    bloque_fin = datetime.strptime(bloque["hora_final"], "%H:%M").time()
+                # Verificar si el día está en dias_semana
+                if dia_semana in dias_semana:
+                    # Marcar los bloques reservados
+                    for bloque in bloques_horarios:
+                        bloque_inicio = datetime.strptime(bloque["hora_inicio"], "%H:%M").time()
+                        bloque_fin = datetime.strptime(bloque["hora_final"], "%H:%M").time()
 
-                    # Verificar si el bloque está dentro del rango de la reserva
-                    if (bloque_inicio >= hora_inicio_reserva and bloque_inicio < hora_final_reserva) or \
-                    (bloque_fin > hora_inicio_reserva and bloque_fin <= hora_final_reserva) or \
-                    (bloque_inicio <= hora_inicio_reserva and bloque_fin >= hora_final_reserva):
-                        ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["estado"] = "Reservado"
-                        ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["fecha"] = dia_semana
-                        ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["descripcion"] = reserva.comentario
+                        # Verificar si el bloque está dentro del rango de la reserva
+                        if (bloque_inicio >= hora_inicio_reserva and bloque_inicio < hora_final_reserva) or \
+                        (bloque_fin > hora_inicio_reserva and bloque_fin <= hora_final_reserva) or \
+                        (bloque_inicio <= hora_inicio_reserva and bloque_fin >= hora_final_reserva):
+                            ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["estado"] = "Reservado"
+                            ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["fecha"] = dia_semana
+                            ocupacion_por_bloque[dia_semana][bloque["hora_inicio"]]["descripcion"] = reserva.comentario
+        else:
+            sala_seleccionada = ''
+            #messages.error(request, "La sala no existe.")
+
+    print(semana_seleccionada)
 
     context = {
         "salas": salasTotales,
         "sala_seleccionada": sala_seleccionada,
         "capacidad_seleccionada": capacidad_seleccionada,
+        "weeks": weeks,
+        "semana_seleccionada": semana_seleccionada,
         "bloques_horarios": bloques_horarios,
         "ocupacion_por_bloque": ocupacion_por_bloque,
         "dias_semana": dias_semana, 

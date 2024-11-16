@@ -35,12 +35,12 @@
           <td>
 
                    <!-- Formulario para ver las reservas del docente -->
-          <form action="{% url 'Listar Peticiones' %}" method="GET" style="display:inline;">
+          <form action="{% url 'reservas' %}" method="GET" style="display:inline;">
             <input type="hidden" name="correo" value="{{ user.correo }}">
             <button type="submit" class="btn btn-success btn-sm">Ver Reservas</button>
         </form>
 
-            <form method="POST" action="{% url 'listado_docentes' %}" style="display:inline;">
+            <form method="POST" action="{% url 'docentes' %}" style="display:inline;">
               {% csrf_token %}
               <input type="hidden" name="docente_id" value="{{ user.id }}">
               <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>

@@ -31,4 +31,12 @@ class LoginForm(AuthenticationForm):
         return self.cleaned_data
 
 class recintosForm(forms.Form):
+    calendario_fecha_inicio = forms.DateField(
+        label='Fecha de Inicio',
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+    calendario_fecha_final = forms.DateField(
+        label='Fecha Final',
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
     archivo_csv = forms.FileField(label='Seleccione un archivo CSV')

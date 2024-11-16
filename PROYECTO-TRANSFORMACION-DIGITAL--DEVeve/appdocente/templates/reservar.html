@@ -12,6 +12,20 @@
             background-color: green;
             color: white;
         }
+
+        .select-wrapper {
+            height: 50px;
+            overflow-y: visible;
+          }
+          
+          .select {
+            width: 100%;
+            /* make it min-height*/
+            min-height: 50px;
+            border-radius: 25px;
+            border-color: #555;
+            padding: 10px;
+          }
     </style>
 
     <script>
@@ -23,53 +37,10 @@
             document.getElementById('modalHoraInicio').value = horaInicio;
             document.getElementById('modalHoraFin').value = horaFin;
     
-            // Llenar las opciones del selector de semana
-            llenarOpcionesSemana(fechaInicio);
     
             // Mostrar el modal
             var modal = new bootstrap.Modal(document.getElementById('reservaModal'));
             modal.show();
-        }
-        
-        function llenarOpcionesSemana(fechaInicio) {
-            const selectSemana = document.getElementById('modalSemana');
-            selectSemana.innerHTML = ''; // Limpiar las opciones previas
-    
-            // Extraer año, mes y día de fechaInicio
-            const partesFecha = fechaInicio.split('-');
-            const anio = parseInt(partesFecha[0], 10);
-            const mes = parseInt(partesFecha[1], 10) - 1;
-            const dia = parseInt(partesFecha[2], 10);
-    
-            let fechaActual = new Date(anio, mes, dia);
-            const diaSeleccionado = fechaActual.getDay(); // Día de la semana de la fecha seleccionada
-    
-            // Cambiar el texto del label según el día de la semana seleccionado
-            const diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-            document.getElementById('labelDiaSemana').textContent = `Seleccione ${diasSemana[diaSeleccionado]}`;
-    
-            // Asegurarnos de que el bucle comienza en el día seleccionado
-            while (fechaActual.getDay() !== diaSeleccionado) {
-                fechaActual.setDate(fechaActual.getDate() + 1);
-            }
-    
-            // Función para formatear la fecha en formato YYYY-MM-DD
-            function formatearFecha(fecha) {
-                let year = fecha.getFullYear();
-                let month = ('0' + (fecha.getMonth() + 1)).slice(-2);
-                let day = ('0' + fecha.getDate()).slice(-2);
-                return `${year}-${month}-${day}`;
-            }
-    
-            // Iterar hasta el fin del año en intervalos de 7 días, agregando al selector
-            while (fechaActual.getFullYear() === anio) {
-                const option = document.createElement('option');
-                option.value = formatearFecha(fechaActual);
-                option.textContent = fechaActual.toLocaleDateString();
-                selectSemana.appendChild(option);
-    
-                fechaActual.setDate(fechaActual.getDate() + 7);
-            }
         }
     </script>
 
@@ -98,6 +69,7 @@
                 </select>
                 <!-- Input oculto para mantener el valor de capacidad -->
                 <input type="hidden" name="capacidad" value="{{ capacidad_seleccionada }}">
+                <input type="hidden" name="semana_seleccionada" value="{{ semana_seleccionada }}">
             </form>
             
             <form method="get" action="">
@@ -108,10 +80,23 @@
                         <option value="{{ capacidad }}" {% if capacidad == capacidad_seleccionada %}selected{% endif %}>{{ capacidad }}</option>
                     {% endfor %}
                 </select>
+                <input type="hidden" name="semana_seleccionada" value="{{ semana_seleccionada }}">
+            </form>
+
+            <form method="get" action="">
+                <label style="padding-left: 20px" for="semana_seleccionada">Semana</label>
+                <select name="semana_seleccionada" id="semana_seleccionada" onchange="this.form.submit()">
+                    <option value="">Seleccionar</option> <!-- Opción por defecto -->
+                    {% for semana in weeks %}
+                        <option value="{{ semana }}" {% if semana == semana_seleccionada %}selected{% endif %}>{{ semana }}</option>
+                    {% endfor %}
+                </select>
+                <input type="hidden" name="capacidad" value="{{ capacidad_seleccionada }}">
+                <input type="hidden" name="sala" value="{{ sala_seleccionada }}">
             </form>
         </div>
 
-        {% if sala_seleccionada %}  <!-- Mostrar la tabla solo si hay una sala seleccionada -->
+        {% if sala_seleccionada and sala_seleccionada != None %}  <!-- Mostrar la tabla solo si hay una sala seleccionada -->
             <table class="table table-dark table-sm table-bordered mt-4" id="horario">
                 <thead>
                     <tr>
@@ -157,14 +142,17 @@
                             {% csrf_token %}
 
                             <input type="hidden" name="capacidad" value="{{ capacidad_seleccionada }}">
+                            <input type="hidden" name="semana_seleccionada" value="{{ semana_seleccionada }}">
 
                             <div class="mb-3">
                                 <label for="horaInicio" class="form-label">Sala</label>
                                 <input type="text" class="form-control" id="modalSala" name="sala" readonly>
                             </div>
 
-
-                            <input type="hidden" name="fecha_inicio" id="modalFechaInicio">
+                            <div class="mb-3">
+                                <label for="semana" id="labelDiaSemana" class="form-label">Fecha</label>
+                                <input type="text" class="form-control" name="semana" id="modalFechaInicio" readonly>
+                            </div>
                             
                             <div class="mb-3">
                                 <label for="horaInicio" class="form-label">Hora de Inicio</label>
@@ -174,13 +162,6 @@
                             <div class="mb-3">
                                 <label for="horaFin" class="form-label">Hora de Finalización</label>
                                 <input type="time" class="form-control" id="modalHoraFin" name="hora_final" required>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="semana" id="labelDiaSemana" class="form-label">Selecciona un Día de la Semana</label>
-                                <select class="form-control" id="modalSemana" name="semana" required>
-                                    <!-- Las opciones de fechas se llenarán automáticamente mediante JavaScript -->
-                                </select>
                             </div>
 
                             <div class="mb-3">
